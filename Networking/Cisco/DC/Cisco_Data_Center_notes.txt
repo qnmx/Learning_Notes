@@ -1,0 +1,132 @@
+# Notes from studying Cisco Data Center Networking
+
+# CCNA Data Center
+
+# Resources for Data Center Networking
+
+#Cisco Validated Designs:
+https://www.cisco.com/c/en/us/solutions/design-zone.html
+
+Data Center Design Summary
+https://www.cisco.com/c/dam/en/us/td/docs/solutions/CVD/Aug2014/DataCenterDesignSummary-AUG14.pdf
+
+Data Center Technology Design Guide
+https://www.cisco.com/c/dam/en/us/td/docs/solutions/CVD/Aug2014/CVD-DataCenterDesignGuide-AUG14.pdf
+
+Server Room Technology Design Guide
+https://www.cisco.com/c/dam/en/us/td/docs/solutions/CVD/Aug2014/CVD-ServerRoomDesignGuide-AUG14.pdf
+
+Unified Computing System Technology Design Guide
+https://www.cisco.com/c/dam/en/us/td/docs/solutions/CVD/Aug2014/CVD-UnifiedComputingSystemDesignGuide-AUG14.pdf
+
+# Cisco Documentation
+
+Nexus: https://www.cisco.com/go/nexus
+MDS: https://www.cisco.com/go/mds
+UCS: https://www.cisco.com/go/ucs
+
+Cisco NX-OS/IOS Comparison - https://www.cisco.com/c/en/us/support/switches/nexus-7000-series-switches/products-configuration-examples-list.html
+
+# Cisco Live
+
+Specific sessions to watch are listed in the seperate list
+
+# UCS Platform Emulator
+https://community.cisco.com/t5/unified-computing-system/ucs-platform-emulator-downloads-ucspe-4-1-2cpe1-ucspe-4-0-4epe1/ta-p/3648177
+
+# Nexus Switches Overview
+- Core Switches: Nexus 9000 & 7000/7700
+- Aggregation Switches: Nexus 6000 & 5500/5600
+- Access Switches: Nexues 5500/5600, 3000, 2000
+
+Nexus Switch is made of 5 major parts:
+- Chassis, a physical enclosure of the switch
+- Supervisor, CPU of the switch
+- Line Cards, physical ports that are plugged in to the network. Known as I/O Modules
+- Power Supply Unit
+- Fans
+
+Nexus 7000/7700
+- Core LAN & FCoE Switch
+- Layer 2 & Layer 3 LAN Switching
+- FCoE SAN Switching
+- No Native FC Ports. FC - Fibre Channel
+
+Nexus 5500/5600
+- Aggregation & Access LAN & SAN Switch
+- Layer 2 & Layer 3 LAN Switching
+- FCoE & Natuve FC SAN Switching
+
+Nexus 2000
+- Acts like a remote line card of "parent" switch
+  Parent is N7K, N6K, or N5K
+- No local switching
+  Traffic is switched/routed by parent
+
+# MDS Switches Overview
+- Cisco SAN Switches
+- Core Switches: MDS 9700/9500
+- Edge Switches: MDS 9200/9100
+
+# MDS vs. Nexus
+- Similarities
+  Both run NX-OS
+  Both suppoer SAN switching (N7K only FCoE, not FC)
+- Differences
+  MDS is not a LAN switch
+  MDS has more SAN specific features
+  - Higher port density
+  - 16Gbps Native FC
+  - SAN Extension (FCIP) - Fibre Channel over IP
+
+
+# Transceivers
+
+1G Transceivers
+- Copper SFP
+- Fiber GBIC
+- Fiber SFP (mini GBIC)
+
+10G Transceivers
+- Fiber XENPAK
+- Fiber SFP+, switch to switch connectivity
+- Twinax (DAC), short distances, from TOR switch to the server within the same rack
+
+40G Transceivers
+- 40G QSFP to 4x 10G SFP+ Twinax
+- QSFP+
+
+100G Transceivers
+-CFP-100G-ER4
+- CPAK 100GBASE
+
+Cisco Transceiver Modules
+https://www.cisco.com/c/en/us/products/interfaces-modules/transceiver-modules/datasheet-listing.html
+
+Disable the check on NX OS to verify Cisco branded optics
+service unsupported-transceiver
+
+# Addresses, Protocols, and Ports 
+https://www.cisco.com/c/en/us/td/docs/security/asa/asa910/configuration/general/asa-910-general-config/ref-ports.html
+
+# IPv4 Subnetting
+https://packetlife.net/media/library/15/IPv4_Subnetting.pdf
+
+# RFC Editor
+https://www.rfc-editor.org/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

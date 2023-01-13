@@ -1,0 +1,14 @@
+# C Programming Learning Notes
+
+# Compiling C Source Code
+
+- Use gcc under Linux
+  gcc file.c
+- gcc options
+  -o to specify the output file
+
+# IDE Options for C
+
+- Eclipse CDT
+- CLion
+- VS Code

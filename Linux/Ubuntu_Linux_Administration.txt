@@ -1,0 +1,24 @@
+#############################################
+Ubuntu Linux Administration
+#############################################
+
+### Essential Commands
+- Check number of processes available to the host
+nproc
+
+- Key Based Authentication
+We can generate the key, a passphrase for the key secures it.
+The public key is copied to the remote user's authorized_key file.
+To cache the passphrase locally we can run the ssh-agent and the add the private key to it.
+
+Generate Public/Private keys
+ssh-keygen
+
+Copy public key
+ssh-copy-id user@REMOTE_LOCATION
+
+Cache the passphrase
+eval $(ssh-agent)
+
+Add keys to it
+ssh-add

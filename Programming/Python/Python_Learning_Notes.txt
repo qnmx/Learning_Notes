@@ -1,0 +1,509 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	Python Programming Learning Notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Methods
+object.method-name(parameters)
+Sample: node02.upper()
+- Using a method does not change the original object 
+
+# Strings: Indexing & Slicing
+- Sequence data types (like strings and lists) support indexing & slicing
+- Indexing
+  Retrive a single element from a sequence data type
+  Format: VAR[#]
+
+- Slicing
+  Retrive a series of elements from a sequence data type
+  Format: VAR[start:end:increment]
+  Display VAR in reverse: VAR[::-1]
+
+# Formatting
+- Using keyword arguments with the print() function
+  end=''
+  sep=''
+- Sample for sep=''
+  print("IP", "address", "is", "1.2.3.4", sep="***")
+- Strings raw data type
+path = r'C:\Users\User\Documents'
+
+- Conversion specifiers
+  print("Your %s address is: %s and there are %d toal IPs in use" % ("IP", "1.2.3.4", 99))
+
+- The format() method
+  print('{0} {1} {2}'.format('a', 'b', 'c'))
+- Allocate spaces to the object (Right justification by default)
+  print('{0:5} {1:10} {2:15}'.format('a', 'b', 'c'))
+  Left justification 
+  print('{0:>5} {1:>10} {2:>15}'.format('a', 'b', 'c'))
+
+- format() method and binary numbers
+  '{0:b}'.format(170) - returns string '10101010'
+- pad the beginning
+  '{0:08b}'.format(17)
+- Sample for printing binary address
+  print('The IPv4 address {0} in dotted binary notation is {1:08b}.{2:08b}.{3:08b}.{4:08b}'.format('1.1.1.1', 1, 1, 1, 1 ))
+  The IPv4 address 1.1.1.1 in dotted binary notation is 00000001.00000001.00000001.00000001
+
+# f-strings
+- Python formats the string by replacing the name of any variable in braces with its value.
+
+first_name = "name"
+last_name = "surname"
+full_name = f"{first_name} {last_name}"
+print(full_name.title())
+
+# Add tab to a string
+print("\tHello World!")
+
+# New lines
+print("Languages:\nPython\nC\nJava")
+print("Languages:\n\tPython\n\tC\n\tJava")
+
+# Eliminate whitespaces
+text = "whitespace "
+text.rstrip() - remove whitespace from right hand side of a string
+text.lstrip() - remove whitespace from left hand side of a string
+test.strip() - remove whitespace from left and right hand side
+
+- Text is only manipulated temporarily
+- Assosicate the stripped value with the variable name, for permanet result
+text = text.rstrip()
+
+# Undrscore in Numbers
+age = 10_000_000
+- use underscores when representing large number for better visibility
+
+# Multiple assignement
+a, b, c = 0, 1, 2
+
+# Constants
+- use CAPITAL letters to name the variable, that value should not be changed
+
+# Mutable vs. Immutable
+- Mutable
+  Can be changed in place
+  list, dict, set and bytearray
+
+- Immutable
+  Cannot be changed in place
+  string, int, float, decimal, complex, bool, tuple, range, bytes
+
+# User Input
+- input() function
+  input("Enter your name: ")
+- Return an object of data type string
+
+# Numbers: Binary
+- From the integer class
+- 0bxxxxx - where 'x' is either a 0 or 1
+- Can also use the bin() function to convert an integer to binary format
+- The string format() method:
+  '{:b}.format(integer)'
+- Pad to the beginning
+  '{0:08b}.format(17)'
+
+# Numbers: Hexadecimal
+- From the integer class
+- Oxyyyy - where 'y' is an hexadecimal character '0-9, A-F'
+  MAC address use cases
+  IPv6 use cases
+- Can also use the hex() function to convert an integer to hexadecimal
+- Convert hex value to decimal
+hex01 = 'ffff'
+int(hex01, 16)
+- hex() function
+- format method
+'{0:x}'.format(255)
+'{0:x}'.format(0xff)
+
+# isinstance()
+- Verification of the type 
+- Sample:
+isinstance(*, str)
+* - VAR, int, bool, etc.
+
+# isalpha()
+- Check if all characters are letters
+- Sample:
+VAR.isalpha()
+
+### Lists ###
+- In Python, square brackets [] indicate a list
+- Individual elements in the list are separated by commas
+- Mutable, can be changed in place
+
+# Accessing Elements in a List
+- To access an element in a list, write the name of the list followed by the index of the item enclosed in square brackets
+- By asking for the item at index -1, Python always returns the last item in the list
+- To access specific elemets for lists containing multiple lists
+list[0][0], where first 0 is first list and second 0 is first element in first list
+- Sample code that creates list with FQDNs and attach them to the Palo Alto CLI style command
+
+FQDNS = ["google.com", "bbc.co.uk", "cisco.com"]
+palo_alto_obj = f"set address FQDN_{FQDNS[0]} fqdn {FQDNS[0]}"
+print(palo_alto_obj)
+
+# Appending Elements to the end of a list
+- use method append()
+nodes = ["SW1", "SW2", "SW3", "R1", "R2", "R3"]
+nodes.append("FG1")
+nodes.append("FG2")
+nodes.append("PA1")
+nodes.append("PA2")
+print(nodes)
+
+# Creating empy list and appending with the nodes
+nodes2 = []
+nodes2.append("SV1")
+nodes2.append("SV2")
+nodes2.append("SV3")
+print(nodes2)
+
+# Insert element into a list
+nodes2.insert(0, "SV01")
+print(nodes2)
+
+# Clear the list
+.clear()
+- This does not remove the list, however, it clears out the content of the list
+
+# Copy the list
+.copy()
+- copy a content from existing list into a new list
+
+# Count
+.count()
+- count how many occurance of X are in the list
+
+# Extend
+.extedn()
+- look for an iterrable data type, pull each element and add it to the list
+
+# Index
+.index()
+- show the index location, where X occurs
+
+# Insert
+.insert()
+- Insert data type in a specific position
+VAR.insert(1, 'str')
+
+# Removing an item using the del statement
+del nodes2[1]
+print(nodes2)
+
+# pop() Method
+- Removes the last value from the list
+- Specify positional parameter to remove specific value
+
+# Remove an item by a value
+nodes2.remove("SV1")
+
+# Lists: Comprehension
+- Combines the "for loop" with an interable data type
+- The range() function
+
+### Working with files ###
+
+# Finding Files
+
+- To list content of a directory:
+  - import os library
+  - use os.listdir() module
+
+- To search for files within a directory
+  - import os library
+  - use os.listdir() module
+  - use either .startswith() or .endswith() to search for patterns
+
+- Pattern matching with fnmatch
+  - import os and fnmatch library
+  - use os.listdir() module
+  - use fnmatch.fnmatch(file, search_criteria)
+
+- Pattern marching with glob
+  - import Path from pathlib (from pathlib import Path)
+  - use Path() function and pass the folder's path as a parameter
+  - search through the Path() with .glob() modules, adding a search pattern as a parameter
+  - Sample:
+
+from pathlib import Path
+
+# fld - folder to search for
+# search, search criteria
+def glob_match(fld, search):
+    p = Path(fld) # Get the path for the folder that will be inspected
+    for n in p.glob(search):
+        print(n)
+
+glob_match("PATH", "SEARCH_CRITERIA")
+
+# Working with Files and Folders
+
+# Getting file attibutes
+- Use os module
+- Import datetime from datetime (from datetime import datetime)
+- Sample:
+---
+import os
+from datetime import datetime
+
+# Define a function that will return UTC date time
+# strftime(%d %b %Y) convert to a str
+def get_date(timestmp):
+    return datetime.utcfromtimestamp(timestmp).strftime("%d %b %Y")
+
+# Get attribute function
+# fld - folder
+def get_file_attrs(fld):
+    with os.scandir(fld) as dir: # Scan directory
+        for f in dir:
+            if f.is_file(): # Check if folder is a file
+                inf = f.stat() # Return statistics for a file
+                print(f"Modified {get_date(inf.st_mtime)} {f.name}")
+
+get_file_attrs("PATH")
+---
+# Traversing a Directory
+- imnport os module
+- Sample:
+---
+import os
+
+# Define function traverse and pass folder as a parameter
+def travers(fld):
+    for fldpath, dirs, fls in os.walk(fld): # Loop through each folder path, directory and files
+        print(f"Folder: {fldpath}")
+        for fn in fls:
+            print(f"\t{fn}")
+
+travers("PATH")
+---
+
+# Copying Files
+- import shutil module
+- Sample:
+---
+import shutil
+
+# Define function to copy files
+def copy_file(src, dst):
+    shutil.copy(src, dst)
+
+# Define function to copy folders
+def copy_folder(src, dst):
+    shutil.copytree(src, dst)
+
+
+# copy_file("src_PATH", "dst_PATH")
+copy_folder("src_PATH", "dst_PATH")
+---
+
+# Moving Files
+- imports shutil module
+- Sample:
+---
+import shutil
+
+# Define function to move files and folders
+def mv_files(src, dst):
+    shutil.move(src, dst)
+
+mv_files("src_PATH", "dst_PATH")
+---
+
+# Renaming files
+- import os module
+- import PAth from pathlib (from pathlib import Path)
+- Sample:
+---
+import os
+from pathlib import Path
+
+# Define first function to rename a file
+def rename_file_1(src, dst):
+    os.rename(src, dst) # Invoke rename module
+
+# Define second function to rename a file
+def rename_file_2(src, dst):
+    f = Path(src)
+    f.rename(dst)
+
+rename_file_1("src_PATH", dst_PATH)
+---
+
+# Deleting files
+- import os module
+- Sample
+---
+import os
+
+# Define a new function and pass a file to delete as a parameter
+def remove_file(f):
+    if os.path.isfile(f): # check if parameter is a file, use isfile() method
+        try:
+            os.remove(f) # Call remove() method, passing the file to remove
+        except OSError as e: # If during file deletion an error occurs:
+            print(f"Error: {f} : {e.strerror}") # Print the error that occured
+    else: # If file if a folder
+        print(f"Error: {f} is not a valid file")
+
+remove_file("File_to_Delete")
+---
+
+# Creating a ZIP Archive
+- import zipfile module
+- Sample:
+---
+import zipfile
+
+# Create a list with files that will be archived
+to_zip = ["PATH_to_file", "PATH_to_file"]
+
+# Define function and pass parameters: name of the zip files, the list of files to compress and additional zip options
+def create_zip(zipf, files, opt):
+    with zipfile.ZipFile(zipf, opt, allowZip64=True) as archive: # Create a zip file that will containt files to compress
+        for f in files: # Add file to a zip file
+            archive.write(f)
+# First parameter: name of the zip file
+# Second paramter: file to be added to the archive
+# Third parameter: addtional options, "w", add file to archive
+create_zip("PATH.zip", to_zip, "w")
+---
+
+# Adding files to zip file
+- import zipfile module
+- Sample:
+---
+import zipfile
+
+# List of files that will be added to exsiting zip file
+to_add = ["PATH_to_file", "PATH_to_file"]
+
+# Define function
+# Pass zip file name, the list of files to add and additional parameters
+def add_to_zip(zipf, files, opt):
+    with zipfile.ZipFile(zipf, opt) as archive:
+        for f in files:
+            lst = archive.namelist() # get a list of files in z zip file
+            if not f in lst: # Check if the files does not exist in the zip file
+                archive.write(f) # Add exisitng file to a zip
+            else: # If the files exist in the zip file
+                print(f"File exists in zip: {f}")
+
+# "a" option will open a zip file and append new files
+add_to_zip("PATH.zip", to_add, "a")
+---
+
+# Reading a ZIP file
+- import zipfile module
+- Sample:
+---
+import zipfile
+
+# Define function
+# Pass the name of the zip file that we want to read
+def read_zip(zipf):
+    with zipfile.ZipFile(zipf, "r") as archive: # To open a zip file in read mode
+        lst = archive.namelist() # Check what files exists in zip file
+        for l in lst:
+            zfinf = archive.getinfo(l) # For each file found in the zip file call .getinfo()
+            print(f"{l} => {zfinf.file_size} bytes, {zfinf.compress_size} compressed") # Print file details
+
+# Invoke read_zip() function and pass the zip file to read
+read_zip("PATH.zip")
+---
+
+# Extracting a zip file
+- import zipfile
+- Sample:
+---
+import zipfile
+
+# Function only extracts one file
+# Pass a name of a zip file, file that will be extracted and location where the file will be extracted to
+def extract_file(zipf, fn, path):
+    with zipfile.ZipFile(zipf, "r") as archive: # Open a zip file in read-only mode
+        archive.extract(fn, path=path) # Pass the name of a file and location for extraction
+
+# Function extracts all files from zip file
+# Pass zip file name and the path where files will be extracted to
+def extract_all(zipf, path):
+    with zipfile.ZipFile(zipf, "r") as archive: # Open a zip file in read-only mode
+        archive.extractall(path=path) # Extract all files from zip file. Specify the path for extraction
+
+# extract_file("PATH.zip", "PATH_to_file", "extracted_folder")
+extract_all("PATH.zip", "extracted_folder")
+---
+
+# Working with text files
+- Sample:
+---
+# Define a function to read a file all at once
+# As a parameter use a name of a file
+def read_txt(fn):
+    with open(fn) as f: # Open a file
+        print(f.read())
+
+# Define a function to read a file line by line
+def read_txt_by_line(fn):
+    with open(fn) as f:
+        lines = f.readlines() # Read each line in the file
+        for line in lines:
+            print(line, end="")
+            line = f.readline()
+
+# Define a function to write to a text file
+# Text file as a parameter and the string that we want to write to the file
+def write_new_txt(fn, str):
+    with open(fn, "w", encoding="utf-8") as f: # Open and write to the file. Use utf-8 as an encoding type
+        f.write(str) # Write to the file, pass the string to write to the file
+
+# Define a function to append new line to a file
+def append_line_txt(fn, str):
+    with open (fn, "a", encoding="utf-8") as f: # Oppen a file in append mode
+        f.write("\n") # Write to a file
+        f.write(str)
+
+# read_txt("PATH_file")
+# read_txt_by_line("PATH_file")
+# write_new_txt("PATH_file", "TEXT_TO_ADD")
+append_line_txt("PATH_file", "TEXT_TO_ADD")
+---
+
+# Working with CSV files
+- import csv module
+- Sample:
+---
+import csv
+
+# Define function to read CSV files
+# Pass a name of CSV file to read and a CSV delimiter
+def read_csv(fn, delimiter):
+    with open(fn) as csv_f: # Open CSV file
+        cnt = -1
+        rows = csv.reader(csv_f, delimiter = delimiter) # Read rows from the CSV
+        for r in rows: # Look at each row in CSV file
+            if cnt == -1:
+                print(f'{" | ".join(r)}') # Print the header of the CSV file
+            else:
+                print(f"{r[0]} | {r[1]} | {r[2]} | {r[3]}") # Print each of the value for the current row
+            cnt += 1 # For each loop increment the value of the counter
+        print(f'{cnt} lines')
+
+# Function that writes to the CSV files
+# Pass the CSV file name, header and a row data
+def write_csv(fn, header, row):
+    with open(fn, mode="w", newline="") as csv_f: # Open CSV filer in write mode. Newline start with ""
+        writer = csv.writer(csv_f, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL) # Invoke writer() method to be able to write, to CSV file
+        writer.writerow(header) # Write to the CSV file
+        writer.writerow(row)
+
+# read_csv("PATH_file", ",")
+write_csv("PATH_file",
+["HEADER1", "HEADER2", "HEADER3", "HEADER4"],
+["DATA", "DATA", "DATA", "DATA"])
+---
+
+

@@ -1,0 +1,47 @@
+		### Learning notes for JNCIS-ENT Certification ###
+
+# Layer 2 Switching and VLANs
+
+# EX Series Switches
+- These are Juniper's line of Enterprise switches, designed to offer low latency and high throughput for campus LANs.
+
+# Native VLANs
+- Junos, by default, tags all VLAN traffic
+- If a switch receives a tagged frame for the native VLAN, the frame is dropped
+- Native VLANs can be a security risk. VLAN 1 should never be the native VLAN
+
+# ARP
+- ARP cache is kept for 20 minutes
+
+# RVI
+- Routed VLAN Interfaces
+
+# Creating VLANs
+
+edit vlans
+set NAME vlan-id X
+
+# Set interfaces as trunk
+
+edit interfaces X.X family ethernet-switching
+set port-mode trunk # EX Series
+set interface-mode trunk # QFX Series
+set vlan members VLAN_NAME
+set native-vlan-id X
+
+# Assign VLAN to an interface
+
+edit interfaces X.X family ethernet-switching
+set vlan members VLAN_NAME
+
+edit vlan NAME
+set interface X
+
+# Interface Range
+
+edit interfaces interface-range NAME
+set member X 
+set member-range X to X
+
+
+

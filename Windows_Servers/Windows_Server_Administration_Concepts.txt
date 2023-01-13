@@ -1,0 +1,141 @@
+====================================================================
+
+Windows Server Administration Concepts: Basics and Installation
+
+====================================================================
+
+# Editions of Windows Server
+
+Essentials
+- For small business environments
+- Up to 25 users or 50 devices
+- No Client-Access Licenses (CALs)
+- Can run and Active Directory domain
+  Must be only domain controller
+
+Standard
+- Almost identical feature set to Datacenter Edition
+- 2 virtual machines included in license
+
+Datacenter
+- For large enterprises or those with heavy virtualization requirements
+
+Special-purpose editions
+- Nano Server
+  Only available as a container image
+- Hyper-V Server 2019
+  Free variant of Server Core
+- Windows Server IoT 2019
+
+# Servicing models for Windows Server
+
+Long-Term Servicing Channel
+- Standard, Datacenter, and Essentials editions
+- Server Core and Desktop Experience
+- New major release every 3 years or so
+- No semi-annual feature updates
+
+Semi-Annual Channel
+- Standard and Datacenter editions
+- Server Core version
+- New "feature update" release twice per year (spring, fall)
+- Numbered in "yymm" format
+
+# Three Licensing Models
+
+Retail
+- Purchase of the software only, from Microsoft or from service providers
+
+OEM
+- Purchase of a software/hardware bundle, with factory-installed licenses
+
+Volume licensing
+- License not tied to hardware
+
+- Windows Server 2012 was licenses on a per-processor basis
+- Server 2019 Standard and Datacenter editions are licenses on a per-core basis
+
+Client-Side Licenses
+
+- This is for Windows 10 devices have the right to access the Servers
+- Cliet Access Licenses (CALs)
+  Per user or per device
+- Remote Desktop Services CALs
+  Per user or per device
+
+# Install Windows Server
+
+Windows Server 2019 Basic Requirements
+- CPU: 1.4 Ghz, 64 bit processor
+- RAM: 512 MB (Server Core), 2 GB (Desktop Experience)
+- Disk: 32 GB free space
+- Run tool msinfo32, to view system's information
+
+Virtual Servers
+- To emulate UEFI or TPM features, create a "Generation 2" virtual machine
+
+MBR vs. GPT Partitions
+- MBR (Master Boot Record)
+  Works wirh BIOS, most OSs
+  4 partitions max
+  2TB per partition max
+- GPT (GUID Partition Table)
+  Works with UEFI, newer OSs
+  128 partitions max
+  18EB per partition max
+  Booting requires 64-bit Windows
+
+File Systems
+ExFAT: external drives; cross-platform
+FAT32: flash drives, older Windows drives
+NTFS: Windows fixed drives, flash drives
+ReFS: Windows servers, niche uses
+
+Boot Image
+- An image file (typically *.WIM) that enables a computer to start and launch
+  an operating system setup program. Windows boot images run "WinPE"
+- Boot images are also used for repair purposes
+
+Install Image
+- An image file (typically *.WIM) that contains an operating system for installation
+- Install images may also contain applications in common use within the organization
+  or a department
+
+Answer File
+- A text file containing settings that Windows Setup can use at install time
+  to customize the OS installation.
+- Answer files can potentially reduce the need for many separate image files
+
+Automated Installation Options
+- "Unattended" installation
+  SCCM; answer files
+- "Light touch" installation
+  MDT; answer file
+
+What is SCCM
+- Enterprise class client/server management tool
+  Hardware and software inventory
+  OS and application deployment
+  Update management
+  Endpoint protection
+  Remote control
+
+What is MDT
+- Free tool for building and deploying OS images
+- Create a boot image
+
+Network-based Deployment
+- Network server running the WDS role contains images
+- Client system performs "PXE" boot
+- OS installs across network
+- Multicasting can bring efficiencies
+
+Migrating Users
+- User-specific settings and data
+  User State Migration Tools (USMT)
+
+Migrating Server Roles
+- Tools:
+  Storage Migration Service
+  Windows Server Migration Tools
+ 

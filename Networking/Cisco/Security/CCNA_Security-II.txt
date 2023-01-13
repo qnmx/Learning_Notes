@@ -1,0 +1,572 @@
+#                                               #
+#               CCNA Security Notes             #
+#                                               #
+
+### Learning Notes II ###
+
+---------------------------------------------------------------
+		Security Concepts
+---------------------------------------------------------------
+
+# CIA
+- Confidentiality - use of encryption to protect the data
+- Integrity - use of hash to verify the integrity of the data
+- Availability - making sure that access to data is available
+
+# Logging
+- Options to send logs to
+  Console
+  Monitor - VTY line
+  Memory buffer
+  Flash memory
+  Syslog server
+  SNMP trap
+
+# SIEM Capabilities
+- Data aggregation
+- Correlation
+- Alerting
+- Dashboards
+- Compliance check
+- Retention
+- Forensic analysis
+
+# Security Terms
+- Vulnerability - A weakness that compromises either the security or the functionality of a system
+- Exploit - The mechanism that is used to leverage a vulnerability to compromise the security or functionality of the system
+- Threat - Any circumstance or event with the potential to cause harm to an asset in the form of destruction, disclosure, adverse modification of data, or DoS
+Risk - The likelihood that a particular threat using a specific attack will exploit a particular vulnerability of an asset that results in an undesirable consequence
+
+# Cryptography Concepts
+- Cryptanalysis - Finding and exploiting weaknesses in cryptography algorithms
+- Hash
+  echo -n "Hello World" | md5sum
+- Symmetric Encryption Algorithms
+  Same Key
+  40-256-bit keys, Do not use less than 80-bit keys today
+  Fast, used for VPNs
+  Key management is a challenge - Must have a common secret key before exchange. Must keep the key a secret
+  DES, 3DES, AES, IDEA, RC4, Blowfish
+- Asymmetric Encryption Algorithms
+  Uses key pairs. Public and private
+  Encrypt with a private key - decrypt with a public key
+  Encrypt with a public key - decrypt with a private key
+  Key length from 512-4096 bits
+  RSA, DSA, Elliptic curve
+- Digital Signatures
+  Remember to encrypt with a private key - all with a public key can decrypt
+  Data is large - expensive to do this
+  Instead, hash the data and encrypt the hash
+
+---------------------------------------------------------------
+		AAA Concepts
+---------------------------------------------------------------
+
+# AAA
+- Authentication, Authorization and Accounting
+- Two types: Administrative Access (Devices login), Remote User Acess (User authentication)
+
+- Configure AAA
+Add username/password
+  username USER secret SECRET
+
+Enable AAA
+  aaa new-model
+
+Create TACACS group
+  aaa group server tacacs+ NAME
+  server-private X.X.X.X key SECRET
+
+Configure authentication method lists
+  aaa authentication login default local - default authentication is set to local
+  aaa authentication login default/NAME group tacacs+/GROUP_NAME local - authenticate via TACACS Server, then local as a backup
+Attach authentication method to the console line  
+  line console 0
+  login authentication default
+Attach authentication method to the VTY lines
+  line vty 0 4
+  login authentication default/NAME
+
+Test aaa authentication
+  test aaa group tacacs+ USER PASSWD new-code
+
+Configure authorization method lists
+Configure accounting method lists
+
+# TACACS+ and RADIUS
+- Network device to server communication
+- ACS supports both
+- ISE supports both as of version 2.x
+- TACACS = TCP/49
+- RADIUS has robust API and accounting
+- RADIUS = UDP/1812&1813
+
+# SSH Setup
+- Create ip domain name
+  ip domain-name NAME
+  crypto key generate rsa modulus 2048 label NAME
+  ip ssh version 2
+- Update VTY lines
+  line vty 0 4
+  transport input ssh
+
+# Create access per privilege level
+  privilege exec level X command_name 
+  enable secret level X SECRET
+
+# Creating Parser Views
+- Enter enable mode NAME
+  enable view
+- Enter global configuration mode
+- Create a parser view
+  parser view NAME
+- Set the view password
+  secret 0 SECRET
+- Define the available commands
+  commands exec include all show
+
+# Accessing Parser Views
+enable [view name]
+show parser view [all]
+
+---------------------------------------------------------------
+		Secure Management  
+---------------------------------------------------------------
+
+# Managing Files
+- copy
+- pwd
+- cd nvram:
+- dir
+- delete
+- squeeze
+
+nvram - storage for startup config
+startup - storage for RAM
+
+# IOS Resiliency
+secure boot-image
+secure boot-config
+
+# CPU Thresholding
+process cpu threshold type total rising 80 interval 5
+rising X - send SNMP trap when CPU of the device is higher than X over configured span of time
+falling X - send SNMP trap when there is underutilization of CPU
+- SNMP Traps are required for CPU thresholding to work 
+
+# Management ACLs
+- Secure VTY lines
+access-list X permit X
+line vty 0 4
+access-class X in
+
+- Secure HTTP/HTTPS Access
+ip http access-class X(ACL)
+
+---------------------------------------------------------------
+               Security on Cisco Routers
+---------------------------------------------------------------
+
+# CoPP - Control Plane Policing
+- Consist of three elements
+  Class Map
+  Policy Map
+  Service Policy
+
+access-list 101 permit X X X
+class-map class_NAME
+match access-group ACL_NR/NAME
+show class-map
+
+policy-map Policy_NAME
+class class_NAME
+police rate 8000
+exit
+exit
+
+control-plane
+service-policy input Policy_Name
+log message: %CP-5-FEATURE: Control-plane Policing feature enabled on Control plane aggregate path
+show policy-map control-plane
+
+# CPPr - Control Plane Protection
+- More granular than CoPP
+- Three different Control Planes
+  Host Interface - Traffic destined to one of the interfaces of the router, SSH, SMNP
+  Transit Interface - Traffic that is passing through the router, but needs additional processing, (traffic that could not be moved to Data Plane traffic). Example: Tunnel passing through the router
+  CEF Exception - All the other traffic, that is sent to the router's processor. Sample: CDP, packets with TTL of 1, ARP, eBGP, OSPF, no IP traffic
+
+- Configuration is very similar to CoPP feature.
+  When doing the last step:
+  control-plane cef-exception|host|transit
+- Log message: %CP-5-FEATURE: Control-plane Policing feature enabled on Control plane host path
+
+# Routing Protocols Authentication
+# OSPF
+- create a key chain
+key chain NAME
+key 1
+key-string PASSWD
+cryptographic-algorithm hmac-sha-256
+
+- Add a key chain to interfaces running OSPF
+int Gi0/0
+ip ospf authentication key-chain NAME
+
+# EIGRP
+- create a key chain same as OSPF key chain
+- Add key chain to interface running EIGRP
+ip authentication mode eigrp X md5
+ip authentication key-chain eigrp X key-chain_NAME 
+
+
+---------------------------------------------------------------
+               802.1X Authentication
+---------------------------------------------------------------
+
+# 802.1X
+- IEEE designed protocol to perform port-based authentication
+
+# Definition of Terms
+- Supplicant - a software that is installed on a client device
+  Windows native client: Services > Wired AutoConfig > Startup type: Automatic > Start
+                         Properties of Ethernet adapter > Authentication > Enable IEEE 802.1X authentication
+  Dedicated client: Cisco AnyConnect Client, Network Access Manager
+- Authenticator - an Access level switch, an Access Point, ASA, Cisco Router
+- Authentication Server - ISE (policies)
+
+# Protocol Communicaton
+- EAP
+- EAP-MD5
+- EAP-TLS
+- PEAP
+
+# Actions
+- DACL - Downloadable ACL, configured on ISE
+  This is downloaded by the switch and applied to the port, where a machine is connected to
+- VLAN Assignment
+- Redirect URL, seen in a guest access
+
+# Process Flow
+- EAP-Start - initial messages when a device is connected to the network (user access switch)
+- Access-Request - message sent by the Authenticator to the Authentication Server
+- Access-Accept - message sent by ISE to Authenticator
+- EAP-Success - message sent by the Authenticator to the end machine (PC, laptop)
+
+
+---------------------------------------------------------------
+               Common Layer 2 Attacks
+---------------------------------------------------------------
+- VLAN Hopping - Native VLAN mismatch
+- Double Tagging - Scapy tool
+- MAC Spoofing - changing MAC address
+- CAM Table Overflow Attacks - macof
+- ARP Cache Poisoning, Ettercap
+
+
+---------------------------------------------------------------
+               Mitigating Layer 2 Attacks
+---------------------------------------------------------------
+# Protecting Trunk Links
+- switchport nonegotiate
+- switchport trunk allowed vlan x-y
+- switchport trunk native vlan 999
+
+# Limit MAC Addresses on a Port
+- switchport port-security
+- switchport port-security maximum
+  Protect: Drops Packets
+  Restrict: Drops Packets plus Syslog message
+  Shutdown: Error-Disabled State
+
+# Private VLANs
+- Layer 2 Isolation
+- Traffic controlled by three sub-vlans
+  Isolated - ports assigned to isolated VLAN can talk with DG
+  Community - ports assigned to community VLAN can talk with eachother 
+  Promiscuous - DG
+- PVLANs can span across multiple switches
+
+# PVLAN Edge
+- Control Ports from talking to one another
+- Protected Commands
+- Only works for ports on the same switch
+- Configuration: switchport protected
+
+# ACLs 
+
+<1-99>            IP standard access list
+<100-199>         IP extended access list
+<1300-1999>       IP standard access list (expanded range)
+<2000-2699>       IP extended access list (expanded range)
+
+---------------------------------------------------------------
+               DHCP and ARP Security
+---------------------------------------------------------------
+# DHCP Snooping
+- Global Commands:
+  ip dhcp snooping vlan X
+  no ip dhcp snooping information option
+  ip dhcp snooping
+- Interface Commands:
+  ip dhcp snooping trust 
+
+# Gratuitous ARP
+- Anyone can claim to be the owner of an IP/MAC Address
+- ARP Attacks use this to redirect traffic
+- Tools: Dsniff, Cain & Abel, Ettercap, Yesenia
+- Configuration Guidelines of DAI
+  DHCP Snooping
+  Configured by VLAN
+  Trust an interface
+  Rate limiting
+- Global Commands:
+  ip arp inspecion vlan X
+- Interface Commands:
+  ip arp inspection trust
+
+
+---------------------------------------------------------------
+               Features of Cisco ASA 9.X
+---------------------------------------------------------------
+# Logging
+logging enable
+logging host X.X.X.X - To send log messages to a Syslog Server
+logging trap - Set logging level or list for syslog server
+
+- Logging on ASA is very extensive, use logging buffer to log messages to the buffer
+
+# Features of the Cisco ASA
+- Application-aware stateful packet inspection engine
+- Flows based  on source and destination addresses and ports - show conn
+- Rich IP routing functionality - OSPF, EIGRP, RIP and BGP support
+- IPv6 support
+- Natively integrates with multicast networks
+- Provides for an integrated DHCP server and client
+- Robust support of varying NAT scenarios
+
+# Modes of Deployment
+- Single Routed Mode (default) - L3 operation
+- Single Transparent Mode - L2 operation
+- Multiple Context Routed Mode
+- Multiple Context Transparent Mode
+
+# High Availability, Failover and Clustering
+- Active/Standby Failover
+- Active/Active Failover
+- Clustering, bundling multiple ASA into one logical unit, communication between ASAs is exchanged via CCL, Cluster Control Link
+
+# Overview of the Cisco ASA CLI Command Set
+- Five CLI modes
+- ROM monitor mode - used for low-level configuration, e.g. password recovery
+- User EXEC mode
+- Privilege EXEC mode
+- Global configuration mode
+- Specific configuration mode
+
+# Basic Consfiguration of ASA
+- IP address
+- Enable HTTP Server
+  http server enable - command enables HTTPS Server
+  http X.X.X.X X.X.X.X - Allow access to HTTP Server from specific host/subnet
+  http 0 0 Interface_NAME - Allow access to anybody on specified interface
+- Allow ASDM Access
+
+# Interface Configuration
+- To clear Interface configuration
+  clear configure interface X/X
+
+- IP address
+- Name - nameif
+- Security Levels - traffic from the interface with a higher security value is allowed to pass, to the interface with the lower security value
+- Allow the same security level interfaces to communicate with each other
+  same-security-traffic permit inter-interface
+- Configuration wizard - setup command, requires management interface
+
+
+---------------------------------------------------------------
+            	NAT and Access Control
+---------------------------------------------------------------
+
+# Allow ICMP through ASA
+By default, the ASA has a global inspection policy that doesn’t permit ICMP traffic. If you want to ping between devices through your ASA firewall then we have to inspect ICMP traffic, you can do it like this:
+
+ASA1(config)# policy-map global_policy
+ASA1(config-pmap)# class inspection_default
+ASA1(config-pmap-c)# inspect icmp
+
+- NAT RFC - 1631
+- Inside local IP address
+  The IPv4 address assigned to a host on the inside network
+  The address is typically an RFC 1918 address
+- Inside global IP address
+  A legitimate IPv4 address that represents one or more inside local IPv4 addresses to the outside world. This is a translated IP address.
+- Outside local IP address
+  The IPv4 address of an outside host as it appears to the inside network
+- Outside global IP address
+  The IPv4 address that is assigned to a host on the outside network by the host owner
+
+# NAT Types
+- Static
+  Maps an unregistered IPv4 address to a registered IPv4 address. One-to-one static NAT is particularly useful when a device must be accessible from an outside network.
+- Dynamic
+  Maps an unregistered IPv4 address to a registered IPv4 address from a group of registered IPv4 addresses.
+- Overload
+- Policy NAT
+  Uses ACLs to perform NAT differently according to ACL criteria (source addresses, destination addresses, ports)
+
+# Object-Based NAT
+- Overcomes constraints from 8.2 and earlier versions of ASA OS
+- Network Object
+  A Host, Translated Address and Service Network Object is created for translation
+  Network Object is a host address, network address or range of addresses.
+
+# ASA NAT Table
+- Manual NAT (Section 1)
+  Enables the administrator to define translations that the appliance compares before the other two sections
+- Auto NAT (Section 2)
+  Also, referred to as object NAT, contains translations that are defined in the object itself
+- Manual NAT after Auto NAT (Section 3)
+  Contains more general translations that are not handled by the sections above
+
+# Static NAT Configuration
+- ASDM: Configuration > Firewall > NAT Rules
+- Sample configuration:
+
+object network NAME_1
+host X.X.X.X
+description DESCRIPTION
+object network NAME_2
+host X.X.X.X
+nat 1 source static NAME_1 NAME_2 unidirectional
+
+- NAT verification
+  show xlate
+  show nat
+
+# Dynamic NAT
+- Sample configuration:
+
+object network Pool_NAME
+range X.X.X.X X.X.X.X
+description DESCRIPTION
+object network NAME
+description DESCRIPTION
+nat dynamic Pool_NAME
+
+# PAT
+- Sample configuration:
+
+nat (any,OUTSIDE) after-auto 1 source dynamic any interface
+
+# Access-lists Overview
+- Filtering direction
+  Interface - Applied inbound or outbound
+  Global - Policy affects all interfaces in the inbound direction
+           Rules evaluated after explicit interface access rules
+# Configuring ACLs for an Interface
+- Access rules reference the "Real" (non-translated) IP address
+
+# Sessions between interfaces with the same security level
+- Must be explicitly enabled
+- Connectivity is governed by the access rules on the relevant interface
+
+# Sample configuration
+
+access-list OUTSIDE_access_in line 1 extended permit tcp any object PC-2 eq https 
+access-group OUTSIDE_access_in in interface OUTSIDE
+
+# MPF - Modular Policy Framework
+- Facilitates many additional access controls on network flows
+- Complements ACLs, does note replace them
+- Implemented with the following main components
+  Class Maps
+  Policy Maps
+  Service Policies
+
+- By defaul, the Cisco ASA configuration includes a policy, applied globally, that matches all default application inspection traffic and applies inspeciton to the traffic
+- The Cisco ASA security applicance supports one global policy map and one policy map per interface
+
+- Create a new service policy rule or edit an existing one
+- Identify which traffic to match (class map)
+- Apply actions to the traffic (policy map)
+- Verification - show service-policy
+
+---------------------------------------------------------------
+                Zone-based Firewalls
+---------------------------------------------------------------
+# ZBFW Overview
+- Allows grouping of physical adn virtual interfaces into zones
+- Applies firewall policies to traffic that traverses zones
+- Makes it simple to add or remove interfaces and integrate them into the firewall policy
+
+https://www.cisco.com/c/en/us/support/docs/security/ios-firewall/98628-zone-design-guide.html
+
+# Zones Overview
+- A collection of networks reachable over a specific set of router interfaces
+- A given interface belongs to one zone and one zone only
+- The self zone is system-defined and applies to traffic to or from the router itself
+
+# Zone Pairs Overview
+- Zones are grouped into source/destination pairs to facilitate policy assignment
+- Separate resources into zones based on resource sensitivity and thrustworthiness
+
+# Default Values
+- Interfaces in the same zone can communicate without restrictions
+- All traffic is denied between zones
+
+# C3PL
+- Cisco Common Classification Policy Language
+- Class maps
+  Identify traffic at OSI Layers 3 through 7
+  Use multiple matching criteria
+- Policy maps
+  Define policy for traffic at Layers 3 through 7
+- Service policies
+  Activate policy maps for traffic flows on specific direction of zone pairs
+
+https://www.cisco.com/c/en/us/td/docs/routers/access/cisco_router_and_security_device_manager/24/software/user/guide/C3PL.html
+
+# Class Maps
+- Class Maps classify traffic by using different match criteria
+  Access control list
+  Protocol
+  Other class maps
+- Each class map can have multiple match statements
+- Logical AND/OR statements are accomplished using the match type (match-all/match-any)
+- Classes within a policy are evaluated in order of configuration
+
+# Syntax for Class Maps
+class-map type inspect match-all|match-any NAME_CM
+match access-group ACL_#
+match protocol #
+match class-map NAME_CM
+
+# Possible actions a Policy Map can take
+- Inspect - statefull entry for the traffic
+- Permit - allowing a packet, without creating a state entry
+- Drop
+- Log
+
+# Policy Map
+- Unclassified traffic match the default class, referred to as class-default
+- The default action in the class-default class is to drop traffic
+- Default action can be customized per policy map to implement appropriate default actions
+
+# Syntax for Policy Map
+policy-map type inspect NAME_PM
+class type inspect NAME_CM
+inspect
+
+# Syntax for Zone-pairs
+zone security INSIDE
+zone security OUTSIDE
+interface X
+zone-member security INSIDE|OUTSIDE
+zone-pair security IN>OUT source INSIDE destination OUTSIDE
+service-policy type inspect NAME_PM
+
+---------------------------------------------------------------
+              VPNs - Introduction 
+---------------------------------------------------------------
+

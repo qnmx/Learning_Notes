@@ -1,0 +1,181 @@
+##############################################
+Vagrant Learning Notes
+##############################################
+
+# Spin up first Virtual Machine
+- create a directory for a new VM
+- run commands
+vagrant init generic/ubuntu2204
+vagrant up
+vagrant ssh
+
+# Verify the status of the VM
+- move to the directory where VM was created
+- run command:
+vagrant status
+
+# Delete the VM
+vagrant destroy
+vagrant destroy -f
+
+Note: To bring back-up the same VM, run "vagrant up" in the same directory
+
+# Display help for vagrant
+vagrant
+vagrant list-commands
+
+# View installed plugins
+vagrant plugin list
+
+# Managing Vagrant boxes
+- list Vagrant boxes
+vagrant box list -i
+
+- add vagrant box to a local repository
+vagrant box add Box_NAME Box_Source
+
+# Search for Vagrant Boxes
+https://app.vagrantup.com/boxes/search
+
+- boxes naming
+Org/User / Box Name
+sample: generic/ubuntu2204
+
+# Run VM with a specific provider
+vagrant up --provider NAME
+
+Note: Only add --provider parameter at the initial setup of a new VM
+
+# Package a Vagrant Box
+vagrant package -h
+
+# Version Control the Vagranfile
+Note: Do not add .vagrant directory as it contains the state of the VM.
+      Create gitignores to exclude files.
+https://docs.gitignore.io/install/command-line
+
+# Initiate vagrant with minimal Vagrantfile template
+vagran init -- minimal BoxNAME
+
+# Vagrantfile configuration
+- Specify Vagrant provider and pass an object that will help to configure VirtulBox settings
+config.vm.provider "virtualbox" do |vb|
+
+- Specify the ammount of memory used for VM
+vb.memory = X
+
+- Specify the ammount of CPU used for VM
+vb.cpus = X
+
+- Specify Virtual RAM Memory
+vb.customize ["modifyvm", :id, "--vram", "<vramsize in MB>"]
+
+- Sample Vagrantfile
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/jammy64"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 3072
+  end
+end
+
+# Reload the VM
+vagrant reload
+
+Note: Used when Vagrantfile was updated
+
+# Port Forwarding
+- Forward port 80 from VM to 8080 on a local machine only
+config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+
+# SSH to Vagrant Box by using ssh utility
+ssh -i .vagrant/machines/default/virtualbox/private_key vagrant@localhost -p 2222
+
+# Vagrant SSH configuration
+vagrant ssh-config
+
+vagrant ssh-config > ssh.config
+ssh -F ssh.config default
+
+# Validate Vagrantfile
+vagrant validate
+
+# Remove SSH Login Banner
+create .hushlogin file in home directory
+
+# Synced Folder
+/vagrant
+
+# Vagrant autocomplete installation
+vagrant autocomplete install -b
+
+# CRLF
+CR = Carriage Return \r
+LF = Line Feed \n
+
+- Windows have CRLF
+- Linux have LF
+
+- When copying files from Windows to Linux, CRLF are preserved and this might cause issues with running scripts, etc.
+- To overcome the issue, use git
+- Check project to git
+- Run command "git ls-files --eol" to check on the file status
+i/ - files in the repository
+w/ - files in a working directory
+- Create .gitattributes file and add parameter:
+  * text eol=lf
+
+# Vagrant Upload
+- Used to upload files from local machine to VM
+
+# Provision VM with required configuration
+- Use Vagrantfile to add provision parameter
+config.vm.provision "shell", path: "/vagrant/NAME.sh"
+- Use vagrant provision option
+vagrant provision --provision-with NAME
+
+# Inline provision
+config.vm.provision "shell", name: "NAME", inline: "echo NAME"
+
+# Multiline scripts with Here Documents
+config.vm.provision "shell", name: "NAME", inline:<<-NAME
+  echo NAME
+  echo NAME2
+NAME
+
+# Run provisioning scripts not as a root user
+- Add entry privileged: false
+config.vm.provision "shell", name: "touch", privileged: false, inline: "touch test.txt ~"
+
+# Run provisioners always
+- Add parameter
+run: "always"
+
+# Snapshots
+vagrant snapshot save NAME
+
+# Create Multi-machine Environments
+- Add config.vm.define to Vagrantfile
+- Sample
+config.vm.define "web" do |web|
+end
+
+# Run command on a remote VM
+ssh -c "COMMAND"
+
+# Use of a Loop to generate machines
+- Sample
+(1..3).each do |index|
+  config.vm.define "server#{index}" do |server|
+    server.vm.hostname = "server#{index}"
+
+    server.vm.provider "virtualbox" do |vb|
+      vb.name = "svr#{index}"
+    end
+end
+
+# Use REGEX
+- Enter REGEX between //
+
+# Check vagrant status from outside the vagrant files
+vagrant global-status

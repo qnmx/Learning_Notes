@@ -1,0 +1,20 @@
+----------------------------------------------------
+
+### Cisco DevNet Assocciate Learning Notes ###
+
+----------------------------------------------------
+
+------------------------
+# Foundations of Software Design
+------------------------
+# Waterfall Development Strategy
+- Get requirements
+- Design
+- Implement
+- Test
+- Deliver
+
+# Pillars of Good Coding
+- Functional decomposition
+- Error checkcing
+- Usage of design patterns 

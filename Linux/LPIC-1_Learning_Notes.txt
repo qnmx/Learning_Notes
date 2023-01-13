@@ -1,0 +1,22 @@
+#####################################################
+		Linux LPIC-1 
+#####################################################
+
+----------------
+Determine Hardware Settings
+----------------
+- Physical consoles are numbered tty1 - tty6
+- Pseudo terminals represent logical terminals such as GUIS or X-Terminals
+  and those made from remote connections such as SSH or telnet
+- tty - to identify your connected terminal
+- chvt - change virtual terminal
+- The path: /dev/pts identiefies that this is a pseudo-terminal
+- uptime - to check current system status
+- /sys - metadata about the devices is stored in that direcetory
+- /dev - physical devices
+- /proc - numered directories are current processes running on a system
+  - Each numbered directory in /proc represents resource usage of a running process on the system
+  - Directory also contains files that represent resources used by the system
+- watch - execute a program periodically, showing output fullscreen
+- hwinfo - to view hardware details, utility not installed by default
+- gnome-system-monitor - GUI utility for hardware resource monitoring

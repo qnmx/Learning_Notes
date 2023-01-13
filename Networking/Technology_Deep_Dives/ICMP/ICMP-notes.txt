@@ -1,0 +1,15 @@
+
+# ICMP Types
+
+0 = Echo reply
+3 = Destination unreachable
+5 = Redirect
+8 = Echo request
+11 = Time to live exceeded
+
+# ICMP Code - Destination Unreachable
+
+0 = Netwrok unreachable - routing issue
+1 = Host unreachable - host issue
+3 = Port unreachable - Transport layer issue
+4 = Fragmentation needed

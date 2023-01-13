@@ -1,0 +1,294 @@
+#				   		#				
+#		CCNA Security Notes		#	
+#					 	#
+
+### Learning Notes I ###
+
+# Securing the Management Plane - AAA
+
+AAA:
+
+- provides authentication, authorization and accounting for device administration
+- provides authentication, authorization and accounting for network access: wired, wirelles, vpn
+
+- Authorization
+  - Defines whay you are allowed to do
+  - For device administration
+    - Privilage-level
+    - Allowed commands
+  - For network access
+    - VLAN
+    - Access-list
+    - Security Group Tag
+    - Encryption
+    - VPN split tunneling policy
+
+# AAA Model
+
+- Three-party authentication model
+  - Suplicant / end-client
+    - Device requesting access
+    - Speak with the authenticator
+  - Authenticator
+    - Device enforcing the authentication, known as NAD / NAS
+    - Bridges information between suppliacnt and authentication server
+  - Authentication Server
+    - Device performing the authentication
+    - Connected to identity sources: username/password, PKI
+    - Can behave like a proxy towards another authentication server
+
+# RADIUS
+
+- IETF standard (RFCC2865)
+  - Combines authentication and authorization in one process
+  - Uses UDP port 1645/1812 for authentication
+  - Uses UDP port 1646/1813 for accounting
+  - Initial ports of 1645/1646 were also used by datametrics service
+  - RADIUS key with MD5 used to hide/protect user's password
+
+# TACACS+
+
+- Developed by Cisco
+  - Mainly used for device administration
+  - Uses separate processes for authentication, authorization and accounting
+  - Uses TCP port 49
+  - Encrypts entire body of TACACS packet, leaves clear-text header
+
+# AAA for Device Adminitration
+
+- Two types of authentication
+  - Login, allows access to user-mode
+  - Enable, allows access to enable/privileged mode
+- Two types of authorization
+  - Exec, allows access to shell and assigns privilege-level
+  - Command, restricts access to commands
+- Accounting can only be done remotely via TACACS+
+
+# IOS Privilege Levels
+
+- Default privilege levels
+  - 0 - no access
+  - 1 - user mode access
+  - 15  - privileged (enable) mode access
+- User defined privileged levels
+  - Levels 2 - 14 available for assignment
+
+# Authentication Configuration Steps
+
+- Start the AAA process
+  aaa new model
+
+- Configure the TACACS+ server
+  Old method:
+  tacacs-server host <ip_addr> key <shared_key>
+
+- Define authentication list, mnethods allow for redundancy
+  aaa authentication login <list_name> <method>
+  aaa authentication enable default <method>
+
+- Apply authentication list to desired line
+  line vty 0 4
+   login authentication <list_name>
+
+# Authorization Configuration Steps
+
+- Define authorization list, methods allow for redundancy
+  aaa authorization exec <list_name> <method>
+  aaa authorization commands <priv_lvl> <list_name> <method>
+
+- Enable authorization for config-mode commands, otherwise only user-mode commands are authorized
+  aaa authorization config-commands
+
+- Enable authorization for console, otherwise it applies only to VTY access
+  aaa authorization console <-- be careful with this command
+
+- Apply authorization list to desired line
+  line vty 0 4
+   authorization exec <list_name>
+   authorization commands <priv_lvl> <list_name>
+
+# Accounting Configuration Steps
+
+- Define accounting list, no fallback method
+  aaa accounting exec <list_name> <method>
+  aaa accounting commands <priv_lvl> <list_name> <method>
+
+- Apply accounting list to desired line
+  line vty 04
+   accounting exec <list_name>
+   accounting commands <priv_lvl> <list_name>
+
+Note: if a non default list was used in authentication, authorization and accounting, those lists will need to be applied to specyfic lines
+
+# AAA Verification Steps
+
+- Verify the TACACS+ server
+  show tacacs
+  show aaa servers detailed
+  show pprivileged level
+
+- Verify the AAA lists
+  show aaa method-lists all
+
+- Test authentication against TACACS+ server
+  test aaa group tacacs+ <username> <password> legacy
+
+# SSH configuration steps
+
+- Configure hostname and domain-name (for RSA generation)
+- Generate RSA public-private key-pair (for encryption)
+
+# Syslog
+
+- Router can be configured to send log messages to
+  - Console
+  - VTY lines
+  - Buffer
+  - Remote syslog server (runs over UDP 514 by default)
+    - Optionally TCP can be used
+
+- Log messages have different severity levels, with level 7 providing the most output
+
+0 - emergencies 
+1 - alerts
+2 - critical
+3 - errors
+4 - warnings
+5 - notifications
+6 - ifnromational
+7 - debugging
+
+- Never enable level 7 at the console, it will melt down router CPU!
+  bad example: debup ip packet
+- debugging level should only be performed to the buffer not to the console or vty lines, also do not perform debugging level to the syslog server
+
+# Syslog configuration steps
+
+- Enable logging, enabled by default
+  logging on
+
+- Define console, VTY and buffer as destinations
+  logging console <level>
+  logging monitor <level> (VTY lines)
+  logging buffer <buffer_size>  <level>
+
+- Define syslog server as destination
+  logging host <ip_address>
+  logging trap <level>
+
+# Syslog verification
+
+  show logging
+
+# NTP
+
+- Network Time Protocol
+- Runs over UDP, port 123
+- NTP configuration steps
+- NTP server
+  ntp master
+  ntp authentication-key # md5 string
+  ntp trusted-key #
+- NTP client
+  ntp authentication-key # md5 string
+  ntp trusted-key #
+  ntp authenticate ! to authenticate a time source
+  ntp server <ip_address> key <key_nr>
+
+
+# SNMP
+- Simple Network Management Protocol
+- Three versions
+  SNMPv1
+  SNMPv2c
+  SNMPv3
+- SNMP Roles
+  SNMP agent is the network device
+  SNMP manager is the SNMP server
+- It is based on three main methods
+  SNMP GET (read device statistics, like interface statistics) - UDP 161
+  SNMP SET (configure the device remotly, like VTP configuration) - UDP 161
+  SNMP TRAP (receives unsolicited events from device) - UDP 162, can optionally use TCP (called INFORM)
+
+# SNMPv3
+- SNMPv3 adds mainly security features
+- SNMPv3 security models
+  nonauthnopriv (username authentication only as community)
+  authnopriv (username/password authenticaion via MD5)
+  authpriv (username/password authentication via MD5 and encryption via DES/3DES/AES)
+
+# SNMPv3 configuration steps
+- Define a group of users and security level
+  snmp-server group <group_name> v3 <security_level>
+- Define authentication user, associate it with the group
+  snmp-server user <user_name> <group_name> v3 auth <algorithm> <auth_key> priv <algorithm> <encryption_key>
+- Define the SNMP server
+  snmp-server host <ip_address> traps version 3 <security_level> <user_name>
+- Define traps
+  snmp-server enable traps ?
+- Enable SNMP traps on the interface
+  snmp trap link-status
+
+# SNMPv3 verification steps
+- Verify users and groups
+  show snmp group
+  show snmp user
+- Verify SNMP servers
+  show snmp host
+  show snmp sessions
+
+# Zone Based Firewall Policy Elements
+- Claas Map
+  Identifying Traffic:
+  - Access Lists
+  - User Groups
+  - Protocl
+  - Nested Class-Maps(s)
+- Policy Map
+  Actions to Take:
+  - PASS - Simply permits traffic (No state table entry)
+  - DROP - Drop traffic
+  - INSPECT - Permit traffic and create state table entry
+  - LOG - Log dropped traffic
+- Service Policy
+  Applies Service Policy to Zone Pairs
+  - Single statement applied
+  - Directionality is part of the zone pair
+- Zone Pairs
+  Traffic Flow Between Two Zones
+  - Unidirectional
+  - Does not affect traffic within a zone
+  - Soure and destination zones specified
+  - Traffic dropped if no policy exists
+
+# ASA Features/Functionality
+- Packet Fitlering
+  Access-Lists, permit/deny
+  Named only
+  Standard or Extended
+  Network Masks
+- Stateful Inspection/Filtering
+  Permit/deny plus state table
+  
+# ASA NAT Support
+  Static NAT
+  Dynamic NAT
+  PAT
+  Exemption/Policy 
+
+# ASA Factory Default
+  conf t
+  config factory-default
+
+# Threat Detection Techniques
+- Signature-Based
+- Anomaly-Based
+  Method of IDS/IPS detection that uses deviation from baseling network traffic behavior to determine potentially dangerous traffic
+- Policy-Based
+- Reputation-Based, Ironport devices
+
+# Intrusion Detection Terminology
+- False Positive - false alarm, legitimate traffic triggers a system alarm
+- False Negative - Malicious traffic has not been detected
+- Tru Positive - Alerts are not beeing generated, genuine traffic
+- True Negative - Malicious traffic is caught and detected by IDS/IPS

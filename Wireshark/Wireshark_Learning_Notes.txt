@@ -1,0 +1,46 @@
+### Wireshark Learning Notes ###
+
+# Where to capture the traffic
+- Try to capture the traffic on a client as well as the server
+
+# Wireshark Capture Options
+- Go to a gear icon, to access the capture settings
+- Go to Manage Interfaces, to choose only interested interfaces
+- Snaplen column - how much Bytes to capture, per frame, 64 Bytes should be enough to capture header of Etherner, IP and TCP/UDP
+- delta time - time in-between the packets that are displayed
+
+# Analyzying IPv4, IPv6, and ICMP
+- TTL values: 255, 128 or 64
+
+- ICMP Types
+0 - Echo reply
+3 - Destination unreachable
+5 - Redirect
+8 - Echo request
+11 - Time to live exceeded
+
+- ICMP Code - Destination Unreachale
+0 - Network unreachable (routing issue)
+1 - Host unreachable (host issue)
+3 - Port unreachable (host port is unavailable)
+4 - Fregmentation needed
+
+- The IPv6 Addresses
+Link Local Address Range: fe80::/64
+Global Address Range: 2000::/3
+Unique Local Address Range fc00::/7
+
+# Command line packet capture
+- dumpcap
+  -D, to list the interfaces
+  -h, help menu
+  -i Interface_number, to start the capture
+  -w location, to specify a location for PCAP file
+- Capturing via CLI is less resource intensive and it captures more RAW data
+
+# Filtering Traffic
+- Capture filter - pre-capture settings, what traffic I like to capture
+  Filter syntax is way simpler than disaply filters syntax
+- Display filter - post-capture settings
+  To display different TCP/UDP ports: tcp.proto in {80 443 8080}
+

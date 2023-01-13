@@ -1,0 +1,22 @@
+# To allow ping between vSRX and other node
+set security zones security-zone trust interfaces X host-inbound-traffic system-services ping
+
+# Delete Security features on SRX
+delete security zones
+delete security policies
+delete security nat
+delete security screen
+commit check
+
+# Change Inet forwarding mode from flow based to packet based
+set security forwarding-options family mpls mode packet-based
+(family mpls) - it associate inet and mpls to the same group
+
+Restart the SRX
+
+Verification command
+show security flow status
+
+# Restaring Routing process
+restart routing
+! impacting process

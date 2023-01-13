@@ -1,0 +1,403 @@
+### Learning Notes for AWS CP
+
+# AWS Global Infrastructure
+
+- Amazon CloudFront 
+- is a content delivery network operated by Amazon Web Services
+  https://aws.amazon.com/cloudfront/
+
+- Edge Locations 
+- Used as nodes of a global content delivery network (CDN)
+- Utilized by Amazon CloudFront and Amazon Route 53 
+
+# Cloud Economics
+
+- AWS Cost Explorer
+- User interface for exploring your AWS costs
+  https://aws.amazon.com/aws-cost-management/aws-cost-explorer/
+
+- AWS TCO Calculator
+
+- AWS Simple Monthly Calculator
+
+- AWS Pricing Calculator
+
+# Compute Services
+
+- Amazon EC2
+- Provides secure and resizable virtuals servers on AWS
+- Root Device type:
+  Instance Store: Ephemeral storage that is physically attached to the host the virtual server is running on
+  Elastic Block Store (EBS): Persistent storage that exists separately from the host the virtual server is running on  
+
+# Amazon EC2 Purchase Types
+
+- EC2 Reserved Instance Types
+  Standard - Highest discount, works for steady workloads
+  Convertible - Enables the conversion of attributes, works for steady workloads
+  Scheduled - Works for a time window you reserve, good for a predictable workload
+
+- Savings Plans
+  Similar in concept to reserved instances
+  Supports compute with EC2, Fargate, and Lambda
+  Unlike Reserved Instances, it does not reserve capacity
+  Comes in 1 or 3 year terms
+
+- Spot Instances
+  Enable you to leverage excess EC2 compute capacity
+  When you request instances, if your bid is higher than Spot price they will launch
+  If the Spot price grows to exceeed your bid, the instances will be terminated
+  Spot instances can be notified 2 minutes prior to termination
+
+- Dedicated Host
+  The dedicated host pricing model gives you a dedicated physical server.
+
+# AWS Elastic Beanstalk
+- Platform for scaling and deploying web apps and services
+- Platform as a Service offering
+- Only pay for the other services you leverage
+- Handles provisioning, load balancing, scaling and monitoring
+
+# AWS Lambda
+- Enables compute without managing servers
+- Only charged for usage based on execution time
+- Integrates with many AWS services
+- Enables event-driven workflows
+
+# Content and Network Delivery
+
+- VPC - Amazon Virtual Private Cloud
+- A logically isolated section of the AWS Cloud where you can launch AWS resources in a virtual network that you define
+
+- AWS Direct Connect
+- A cloud service solution that makes it easy to establish a dedicated network connection from your data center to AWS
+
+- Elastic Load Balancing
+- Distributes traffic across multiple targets
+- Integrates with EC2, ECS (Elastic Container Service), and Lambda
+- Supports one or more AZ's in a region
+- Three types of load balancers
+  Application Load Balancer ALB
+  Network Load Balancer NLB
+  Classic Load Balancer
+
+- Scaling on Amazon EC2
+  Vertical Scaling - You "scale up" your instance type to a larger instance type with additional resources
+  Horizontal Scaling - You "scale out" and add additional instances to handle the demand of your application
+
+- Amazon API Gateway
+- Fully managed API management service
+- Directly integrates with multiple AWS services
+- Supports VPC and on-premises private applications
+
+- AWS Global Accelerator
+- Utilizes IP addresses that route to edge locations
+- Once request reaches edge locations, traffic is routed through AWS network
+- Can route request to many AWS resources:
+  Network Load Balancer (NLB)
+  Application Load Balancer (ALB)
+  EC2 Instance
+- AWS Global Accelerator Use Cases
+  Non-HTTP Protocol - If you are using UDP, MQTT, or VOIP for your solution
+  Requires Static IP - If your solution needs IP (and not DNS) reolution
+  Instant Failover - If you need the best approach for failover and fault-tolerance
+
+
+# File Storage Services
+
+- S3 - Amazon Simple Storage Service
+- Stores files as objects in buckets
+- Provides different storage classes for different uses cases
+- Stores data across multiple availability zones
+- Enables URL access for files
+- Offers configurable rules for data lifecycle
+- Can serve as a static website host
+
+- Amazon S3 Non-archival Storage Classes
+  S3 Standard - is the default storage class and if for frequently accessed data
+  S3 Intelligent-Tiering will move your data to the correct storage class based on usage
+  S3 Standard IA (Infrequent Access) - is for infrequently accessed data with the standard resilience
+  S3 One Zone-IA - is for infrequently accessed data that is only stored in one AZ
+
+- Amazon S3 Glacier
+- Designed for archiving of data within S3 as separate storage classes
+- Offers configurable retrival times
+- Can send files directly or through lifecycle rules in S3
+- Provide two different storage classes
+  S3 Glacier
+  S£ Glacier Deep Archive
+
+- Amazon EC2 File Storage Services:
+- Amazon EBS: Persistent block storage for use with Amazon EC2
+- Amazon EFS: Elastic file system for use with Linux-based workloads
+  Fully managed NFS file system
+- Amazon FSx for Windows File Server
+  Fully managed native Windows file system
+
+- AWS Large scale data transfer services:
+- AWS Snowball: Service to physically migrate petabyte scale data to AWS
+- AWS Snowmobile: Service to physically migrate exabyte scale data onto AWS
+
+# Database Services and Utilities
+
+- Amazon RDS - Relational Database Service
+  Fully managed service for relational databases
+- Amazon DMS - Database Migration Service
+  Enables you to move data into AWS from exsiting databases
+
+################################################################
+
+AWS Databases 
+
+################################################################
+
+# Amazon RDS - Relational Database Service
+  Managed relational database Server
+
+# Amazon Aurora
+  Cloud-native relational database
+  MySQL or PostgreSQL compatible
+
+# Amazon ElastiCache
+  Sub-milisecond response time
+  In-memory data store and cache
+  Fully managed service
+
+# DynamoDB
+  NoSQL Database Service
+  Key-Value Database
+  Document Database: HTML, XML, or JSON documents as items in tables
+  Fully managed
+
+# Amazon Keyspaces
+  Apache Cassandra compatible
+
+# Amazon DocumentDB
+  mongoDB compatible
+
+# Data warehouse
+  Hold data needed for analysis
+  Operate on a larger scale than other databases
+
+# Amazon Redshift
+  Cloud data warehouse
+
+# Amazon Neptune
+  Fully managed graph database
+  Query billions of relationships
+
+# Amazon Quantum Ledger Database (QLDB)
+  Fully managed ledger database, Central trusted authority
+  Document data model
+
+# Amazon Timestream
+  Managed, serverless time series database
+
+
+################################################################
+
+# App Integration Services
+
+- Amazon SNS
+  Managed pub/sub messaging service
+- Amazon SQS
+  Managed message queue service
+- AWS Step Functions
+  Serverless workflow management service
+
+- Amazon Step Functions
+  Enables orchestration of workflows through a fully managed service
+  Supports serverless architectures
+  Workflows are defined using Amazon States Language
+
+# Management and Governance Services
+
+- AWS CloudTrail
+  Insert audit trail in an S3 bucket or into CloudWatch Logs
+  Logs events in the region in which they occur
+- Amazon CloudWatch
+  Provides metrics, logs, and alarms for infrastructure
+
+- AWS Config
+  Continually evaluates infrastructure against a set of rules
+
+- AWS System Manger
+  Provides operational data and automation across infrastructure
+
+- AWS CloudFormation
+  Managed service for provisioning infrastrucuture based on templates
+  No aditional charge
+  Templates can be YAML or JSON
+  Enables Infrastructure as Code
+  Manages dependencies between resources
+  Provides drift detection to find changes in your infrastructure
+
+- AWS OpsWorks
+  Configuration management service
+  Provides managed instances of Chef and Puppet
+  Configuration is defined as code for servers
+
+- AWS Control Tower
+  A service to create a multi-account environment on AWS that follows the recommended
+  best practices in operational efficiency, security, and governance.
+
+
+################################################################
+
+Introduction to Security and Architecture on AWS
+
+################################################################
+
+# AWS Well-architected Framework
+  The Well-architected Framework is a collection of best practises across five key
+  pillars for how to best create systems that create businesss value on AWS.
+
+# Compliance Services
+
+- AWS Config
+  Provides conformance packs for standards
+
+- AWS Artifact
+  Provides self-service access to reports
+
+- Amazon GuardDuty
+  Provides intelligent threat detection
+
+# AWS Identities and User Management
+
+# AWS IAM Identities
+  Users - Account for a single individual to access AWS resources
+  Groups - Allows you to manage permissions for a group of IAM users
+  Roles - Enables a user or AWS service to assume permissions for a task
+
+# Policies in AWS IAM
+  A JSON document that defines permissions for an AWS IAM identity (principal)
+  Defines both the AWS services that the identity can access and what acctions
+  can be taken on that service 
+  Can be either customer managed or managed by AWS
+
+# Amazon Cognito
+  User directory service for custom applications
+  Provides UI components for many platforms
+  Provides security capabilities to control account access
+
+# Data ARchitectures on AWS
+# On-premise Data Intergration Services
+
+- AWS Storage Gateway
+  Hybrid-cloud storage service
+
+- AWS DataSync
+  Automated data transfer service
+
+# Data Processing Services
+
+- AWS Glue
+  Managed Extract, Transform, and Load (ETL) Service
+
+- Amazon EMR
+  Big-data cloud processing using popular tools
+
+- AWS Data Pipeline
+  Data workflow orchestration service across AWS services
+
+# Data Analysis Services
+
+- Amazon Athena
+  Service that enables querying of data stored in Amazon S3
+
+- Amazon Quicksight
+  Business inteligence service enabling data dashboards
+
+- Amazon CloudSearch
+  Managed search service for custom applications
+
+# AI and Machine Learning Services
+
+- Amazon Rekognition
+  Computer vision service powered by Machine Learning
+
+- Amazon Translate
+  Text translation service powered by Machine Learning
+
+- Amazon Transcribe
+  Speeach to text solution using Machine Learning
+
+# Disaster Recovery on AWS
+
+# Disaster Recovery Scenarios
+  Backup and Restore
+  Pilot Light
+  Warm Standby
+  Multi Site
+
+# Architecting Applications on Amazon EC2
+# Scaling EC2 Infrastructure
+# Amazon EC2 Horizontal Scaling Services
+
+- Auto Scaling Group
+  Ser of EC2 instances with rules for scaling & management
+
+- Elastic Load Balancer
+
+- AWS Secret Manager
+  Secure way to integrate credentials, API keys, tokens, and other secret content
+  Integrates natively with RDS, DocumentDB, and Redshift
+
+# Security in Amazon VPC
+
+- Security Groups
+  Enables firewall-like controls for resources within the VPC
+  Works at the instance level
+  Serve as a firewall for your EC2 instnaces
+  Control inbound and outbound traffic
+  By default all outbound traffic is allowed
+
+- Network ACL's
+  Controls inbound and outbound traffic for subnets within the VPC
+  Each VPC has a default ACL that allows all inbound and outbound traffic
+  Custom ACL's deny all traffic until rules are added
+
+- AWS VPN
+  Secure access to an entire VPC using an encrypted tunnel
+
+# Security Services
+
+- AWS Shield
+  Managed DDoS protection service for apps on AWS
+
+- Amazon Macie
+  Data protection service powered by machine learning
+
+- Amazon Inspector
+  Automated security assessment service for EC2 instances
+
+# Deploying Pre-defined Solutions on AWS
+
+- AWS Service Catalog
+  Managed catalog of IT services on AWS for an organization
+
+- AWS Marketplace
+  Catalog of software to run on AWS from third-party providers
+
+# AWS Developer Services
+
+- AWS CodeCommit
+  Managed source control service
+  Control access with IAM policies
+
+- AWS CodeBuild
+  Fully managed build and continuos integration service on AWS
+
+- AWS CodeDeploy
+  Managed deployment service for deploying your customer applications
+
+- AWS CodePipeline
+  Fully-managed continuous delivery service on AWS
+  Provides the capabilities to automate building, testing, and deploying
+
+- AWS CodeStar
+  Workflow tool that automates the use of the other developer services
+
+
+

@@ -1,0 +1,638 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			### Palo Alto Firewall Introduction ###
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Next-generation prevention-focused security system
+  User, Application, Content
+
+- Key Capabilities
+  User-ID, App-ID
+  Zero Trust
+- Advanced Threat Prevention
+  IPS, URL Filtering, WildFire & DNS protection
+- Advanced Logging
+  Cortex Data Lake
+- SD-WAN integration
+
+- VM-Series
+- Prisma Access
+  Cloud-based firewall
+- Physical Appliances
+  220, 800, 3200, 5200 & 7000 PA series
+
+# Processing Architecture
+
+- Single-Pass Parallel Processing (SP3)
+  Simultaneous traffic classification & enforcement
+  Full-stack single-pass inspection
+
+- Traffic Planes
+  Palo Alto splits hardware resources between two traffic planes
+- Control
+  Configuration, logging, reporting
+- Data
+  Signature matching, security & network processing
+
+# Management Options
+
+- Web Interface
+  Local - http ot https from local PC
+  Centralized - Panorama
+  Panorama is recommended for networks with 6+ firewalls
+
+- CLI
+  Console, SSH, Telnet
+
+- API
+  XML
+  REST
+
+- Management Port
+  Special interface designed for administration
+  Part of the Control Plane
+- Data ports also support management functions
+  Management Profiles
+  Service Routes
+
+# Service Routes
+
+- Required to provide access to external services through data ports
+  Device > Setup > Services > Service Route Configuration > Customize
+
+# Firewall CLI
+
+- Palo Alto firewalls use two CLI modes
+  Operational - Basic networking/system commands & verification
+  Configuration - Accessible via configure
+
+- CLI Enhancements
+  Use find to figure out the command syntax
+  Use "?"
+  Use the "Tab" key
+  Use the "|" symbol along with match or except for output filtering
++ - command needs a value
+* - this is required to run a command
+> - more options to choose
+
+# Configuration Files
+
+- Running Configuration
+  Current configuration enforced in the Data Plane
+  Control the firewall's behaviour
+  Saved to running-config.xml
+
+- Candidate Configuration
+  Temporary configuration stored in the memory in the Control Plane
+  Saved as either default snapshot.xml or as a custom XML file
+  Requires a commit
+
+- Revert to Last Saved Configuration
+  Replaces current candidate configuration settings with a saved candidate configuration file
+- Revert to Running Configuration
+  Replaces current candidate configuration settings with the current running configuration
+- Load
+  Overwrites the current candidate configuration with a config file
+- Export
+  Exports a Current/Running Configuration file as an XML (backups)
+- Import, Save
+
+# Dynamic Updates
+
+- Keep the system up-to-date with the latest threats, applications & more
+
+# General Configuration
+
+- Device > Setup > Management
+  Hostname
+  Domain
+  Login Banner
+
+- Device > Setup > Operations
+  SNMP
+
+- Device > Setup > Services
+  DNS
+  NTP
+
+# Admin Roles
+
+- Define the type of access that an administrator has to the firewall
+  Dynamic - based on pre-built profiles
+  Role-Based - Customer access for granular control
+
+- Configuration
+  Device > Administrators
+  Device > Admin Roles
+
+# Data Interfaces
+
+- PAN-OS supports several types of interfaces and can operate in multiple deployments
+  Tap, Virtual Wire, Layer 2, Layer 3
+
+- Tap
+  Works on a copy of network traffic
+  Port mirroring (SPAN)
+  Deployed for logging & visibility
+
+- Virtual Wire
+  For inline deployments
+  Traffic control, decryption, QoS, etc.
+  A logical connection between two ports
+  No L2/L3 addresses
+  No management capabilities
+  Easy to integrate
+  Allows for subinterfaces
+- Virtual Wire interfaces must be attached to a Virtual Wire Object
+  Default Virtual Wire ports may need to be removed
+
+- Layer 2
+  Used for L2 switching
+  Inline
+  Require a VLAN Object
+  Support subinterfaces
+
+- Layer 3
+  Used for L3 routing (IPv4, IPv6)
+  Inline
+  Require a Virtual Router
+  Support subinterfaces & management
+
+- Other interfaces
+
+- Loopback
+  Virtual L3 ports internal to the firewall
+  Used in many scenarios
+  Routing, DNS sinkholes & more
+
+- Tunnel
+  Virtual interface used for VPN representation
+
+# Virtual Router
+
+- Enables routing functions
+  Interfaces
+  RIB - Control Plane
+  FIB - Data Plane
+
+- Supported Routing Technologies
+  Static routes
+  OSPF, OSPFv3, BGP, RIP
+  PIM-SM, PIM-ASM, PIM-SSM, IGMP version 1/2/3
+
+# Security Zones
+
+- A group of interfaces representing a segment controlled by the firewall
+  LAN1, Internet, etc.
+
+- A firewall interface can belong to only one zone
+  Interface type & zone type must match
+  Zone-unassigned interface does not process traffic
+
+- Zones affect the data traffic
+  Intra-zone - allowed by default
+  Inter-zone - Policy Rule to allow packets through
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			### Palo Alto Firewall Policies ###
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Policies Overview
+
+- Enforce rules & actions to safely enable applications
+- Supported Policies
+  Security
+  NAT
+  QoS
+  Policy-Based Forwarding
+  Decryption
+  Application Override
+  Authentication
+  DoS Protection
+  Tunnel Inspection
+  SD-WAN
+
+# Policy Rules
+
+- Polices are defined through Rules
+  Common Criteria
+  Conditions & Actions
+
+- General Rule Processing
+  Top-down until a match is found
+
+# Security Policy Overview
+
+- Primary traffic control mechanism
+  Configured through Rules
+    Attribute-based
+      Source/Destination Zone, Addresses, Applications & more
+    Top-down evaluation
+      First-match processing logic
+      Add specific rules first
+
+# Security Policy Rules
+
+- Rule Components
+  Name
+  Source/Destination Zone
+  Rule Type: Intrazone, Interzone, Universal (Intra + Inter)
+  Source/Destination Address
+  User
+  HIP Profile
+  Application
+  Service: Select, any, applicaton-default
+  URL Category
+  Profile Setting: Only for "Allow" rules
+  Tag
+  Other Settings: Description, Audit, Comment, Logging, QoS
+  Action
+
+- Action Types
+  Allow
+  Deny: Block traffic; Based on the application's default Deny Action
+  Drop: Silently drops the application; Optionally sends ICMP Unreachable (used in UDP based applications)
+  Reset: Client, Server, Both; Optionally sends ICMP Unreachable (used in UDP based applications)
+
+- Default Rules
+  The last two (pre-defined) rules of the Policy
+  Intrazone-default
+  Interzone-default
+  Processed last: Only apply for traffic that does not match any user-defined rules
+
+# Policy Objects
+
+- Containers for representation of discrete data
+- Object Types
+  Address (Group)/Region
+  User (Group)
+  Application Group
+  Application Filter
+  Service (Group)
+
+# Working with Security Policy
+
+- Verification & Troubleshooting
+  Device > Troubleshooting > Security Policy Match
+  Rule Usage: Hit Count, Last hit, First hit
+  Device > Setup > Management > Policy Rulebase Settings
+
+# Verify routing table
+  show routing route
+
+# ICMP and ping
+
+- ICMP application - all ICMP messages except echos (ping)
+- ping application - ICMP echo
+
+# NAT Policy
+
+- Enforces packet translations through rules
+  Source & destination zones (required), source/destination addresses, interface and more
+- Rule Processing
+  Top-down, first-match
+  
+# NAT & Security Policy
+
+- IP Addresses
+  NAT & Security Policy rules should always refer to the original IPs. i.e. pre-NAT
+- Zones
+  NAT Policy rules should refer to the original packet (pre-NAT)
+  Security Policy rules
+    Refer to the original packet for the source zone (pre-NAT)
+    Refer to the translated packet for the destination zone (post-NAT)
+    
+- Find the right zone for an IP
+  test routing fib-lookup
+
+# Working with NAT
+
+- Verification & Troubleshooting
+  CLI: show session, show running ippool, show system state | match nat
+  
+# Syslog
+
+- Syslog Configuration
+  Server Profile: Device > Server Profiles > Syslog
+  Log Forwarder: Object > Log Forwarding
+  Policy update - with created profile
+  System/Config Logs: Device > Log Settings
+  
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			### Palo Alto Firewall Technologies ###
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# App-ID
+
+- Advanced traffic classification engine
+  Not dependent on regular protocol/port criteria
+
+- Identification Mechanisms
+  Application Signatures
+- Decryption (SSL/TLS, SSH)
+- Application & Protocol Decoders
+  Detect tunnelled applications and look for protocol conformance
+- Heuristics
+
+# Application Database
+
+- Stores information about all known applications & their properties
+  Objects > Applications
+
+# Unknown Applications
+
+- Unknown Application Handling
+  Dedicated policy rule for unknown traffic
+  App-ID request
+  App-ID development
+
+https://applipedia.paloaltonetworks.com/
+
+# Application Dependencies
+
+- PAN-OS correlates some applications with other(s)
+  e.g. if App1 depends on App2, using App1 in a rule is not sufficient
+  
+- Implicit Dependencies
+  Required dependent applications will be enabled automatically
+  
+- Explicit Dependencies
+  Required dependent applications have to be added manually
+  Rule "Applications" tab ("Depends On")
+  
+# Application Groups
+
+- A collection of applications defined within a single object
+  
+# Application Filters
+
+- Similar to Groups, but updated dynamically
+  New applications matching the filter criteria will be added automatically
+  Defined through application attributes: Category, Subcategory, Technology, Risk Factor, Characteristics
+  
+# Customer Applications
+
+- Created for better visibility & granular control
+  Stored in a separate database
+  Not affected by App-ID updates
+
+# User-ID Overview
+
+- User-ID allows to identify users and enables identity-based access
+  Granular per-user and/or per-group Security Policy rules
+  
+# User-ID Mappings
+
+- User-ID works by mapping IP addresses to usernames
+- Group Mappings
+  The firewall can collect group mapping information for simplified administration
+  LDAP servers only
+- Most mapping techniques involve using a User-Id Agent
+  Windows Agent
+    External, installed on domain servers
+    Saves CPU on the firewall's management plane
+  Integrated Agent
+    Built-in to the firewall
+    Reduces bandwidth usage
+    
+# Mapping Methods
+
+- Server Monitoring
+  Analysis of security event logs (login events)
+- Syslog
+  Analysis of received Syslog messages (login/logout events)
+- Port Mapping
+  For multi-user systems, such as Microsoft Terminal Server or Citrix
+- XFF Headers
+  For proxy servers supporting X-Forwarded-For (XFF) header
+- GlobalProtect
+  For GlobalProtect VPN endpoints
+- Authentication
+  An active mapping mechanism
+  Captive Portal authentication
+  
+# Captive Portal
+
+- A special web portal used to capture user's credentials
+
+# User-ID Configuration Overview
+
+- User-ID configuration requires multiple steps
+  Enable the engine for the right zone(s)
+  Map IP addresses to users
+  Create identity-based rule
+
+# Configuration - AD Integration
+
+- LDAP Profile
+  Device > Server Profiles > LDAP
+  BIND DN must include the domain name
+- Group Mappings
+  Device > User Identification > Group Mapping Settings
+  Verify LDAP connectivity under "Group Include List"
+  Verify with show user group name [list]
+
+# Configuration - Captive Portal
+
+- Captive interface
+  Management Profile (Network > Network Profiles > Interface Management)
+    Response Pages, User-ID
+  Service Routes (Device > Setup > Services)
+    LDAP, UID Agent
+- Authentication Profile(s)
+  Device > Authentication Profile
+    Type, User Domain, Server Profile, Allow List
+  Verify with test authentication
+- Portal Certificate
+  Device > Certificate Management > Certificates > Device Certificates > Generate
+    For self-signed make sure to check "Certificate Authority"
+  Bind certificate to an SSL/TLS Service Profile
+    Device > Certificate Management > SSL/TLS Service Profile
+- Captive Portal
+  Device > User Identification > Captive Portal Settings
+    Authentication & SSL/TLS Profiles, Mode, Redirect Host
+    
+# Configuration - User-ID & Authentication
+
+- User-ID
+  Network > Zones
+    Enable User Identification
+    Trusted zones only
+- Authentication Policy
+  Policies > Authentication
+    Set users to "unknown"
+    Set action to "web-form"
+    
+# Configuration - Remaining Steps
+- Security Policy
+  Add identity-based rules "User"
+- Verification
+  Monitor > Traffic
+  Monitor > User-ID
+  show user ip-user-mapping
+  
+- The authentication Policy is processed before Security Policy
+
+# Security Profiles Overview
+
+- An additional set of inspection engines available to scan traffic
+  Configured under Objects > Security Profiles
+  Activated within a Security Policy "allow" rule"
+    Actions > Profile Settings
+
+# Wildfire Analysis
+
+- Forwards unknown files for WildFire analysis
+  Public, Private or Hybrid
+
+# Security Profile Groups
+
+- Logical "containers" for storing multiple Security Profiles
+  Simplify policy configuration
+  
+- Default Security Profile Group
+  A group named "default"
+
+# Zone Protection Overview
+
+- Defends the entire ingress zone against different types of attacks
+  Offers broad protection - not designed to protect a specific host
+  
+- Zone Protection applies to new sessions only
+  Existing connections bypass Protection Profiles
+  The zone is determined from the ingress interface
+  
+# Configuring Zone Protection
+
+- Create and apply a protection profile
+  Network > Network Profiles > Zone Protection
+  Network > Zones > Zone Protection Profile
+  Verify with CLI show zone-protection
+  
+# DoS Protection Overview
+
+- Protects network against floods & resource-based attacks
+  Similar to Zone Protection, but more granular
+  Processed before Security Policy
+  Enforced on new sessions only
+  Resource-intensive
+  
+# Protection Profiles
+
+- DoS Protection rule logic depends on the configured Profile
+  Aggregate vs Classified
+  Aggregate Profile applies to the combined traffic (per device group)
+  Classified Profile applies to individual devices (per device)
+- Profiles can be combined per rule
+
+# Configuring DoS Protection
+
+- Protection Profiles: Objects > Security Profiles > DoS Protection
+- Protection Rules: Policies > DoS Protection
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			### Mastering Palo Alto Networks ###
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# CLI useful commands
+
+- To test HTTP, HTTPS access to remote web-server
+  test http-server address google.com protocol HTTP/HTTPS
+  
+# Policies
+
+- Service/URL category - to fully block the traffic set it to any
+
+# Routing Context or Virtual Routers
+
+- Virtual routing contexts will provide independent peering with network segments
+
+# Destination NAT
+
+Destination NAT Rule
+Source outside > Destination outside > Translated destination (Real IP)
+
+Security Policy
+Source outside > Destination dmz > Destination address (NAT address)
+
+NAT Policy:
+- Original Packet:
+  Source Zone: outside (one connected to the outside zone) (All users from the Internet)
+  Destination Zone: outside (users from the Internet will hit the outside zone/interface)
+  Destination Interface (Interface pointing to the Internet)
+  Source Address: Any
+  Destination Address: IP of the outside interface
+- Translated Packet:
+  Dest Addr Translation
+  Translation Type: Static/Dynamic
+  Translated Address: IP address of the dmz hosted server (private range)
+  
+# Source NAT
+
+NAT Policy:
+- Original Packet:
+  Source Zone: inside (end hosts subnets)
+  Destination Zone: outside (the one pointing to the Internet)
+  Destination Interface: outside (the one connecting to the Internet)
+  Source Address: Subnet of the inside hosts
+  Destination Address: Any
+- Translated Packet:
+  Src Addr Translation
+  Translation Type: Dynamic IP and Port
+  Address Type: Interface Address
+  Interface: interface connecting to the Internet
+  
+# DoS Protection/Security Profile
+
+- Aggregate - applies to all traffic, regardless of source or destination IP address
+- Classified - applies to a specific type of traffic
+
+# HA
+
+- HA1-A, HA1-B:
+  Interfaces used to exchange heartbeat information
+  Hello packets
+  To synchronise configuration between two nodes
+- HSCI:
+  High-Speed Chassis Interconnect
+  To synchronise sessions between two nodes
+  
+# Virtual Systems
+
+- A physical firewall is divided into multiple virtual firewalls
+  Create virtual firewalls inside one physical firewall
+  Isolate policies between tenants
+  Allocate interfaces per firewall
+- Supported on PA-2000, 3000, 4000, 5000 and 7000 models
+- To enable Virtual System
+  Device > Setup > Management > General Settings > Multi System Capability
+  
+# PAN-OS Upgrades
+
+- Base - Full software version image
+- Maintenance - Fixes/updates for the running software version image
+
+# Palo Alto Maintenance Recovery Tool
+
+- To enter maintenace boot:
+  During the Palo Alto firewall initial boot
+  When prompted, type maint and press Enter before auto-boot continues
+  Once in the partition selection screen, select PANOS(maint)
+  PANOS(sysroot0) - main partition
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### Palo Alto Various Configs and Commands ###
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Reset Palo Alto to Factory Defaults
+
+- Issue command: debug system maintenance-mode
+- Proceed to maintenance mode
+- Choose Factory Reset
+
+# Configure the Management Interface IP
+
+set deviceconfig system type static
+set deviceconfig system ip-address <ip address> netmask <netmask> default-gateway <default gateway> dns-setting servers primary <DNS ip address>

@@ -1,0 +1,83 @@
+#################################
+Linux Essentials Learning Notes
+#################################
+
+# Linux Runlevels
+
+0 - system halt
+1 - single-user (rescue) mode
+3 - multi-user mode without GUI
+5 - multi-user mode with GUI
+6 - reboot
+
+Verify current runlevel:
+systemctl get-default
+
+Change temporairly a runlevel
+systemctl isolate X
+
+Chaange permanently a runlevel
+systemctl enable X
+
+# Locale Settings
+
+Locale settins location
+/usr/share/i18n/locales
+
+View and edit locale settins
+localectl status
+localectls set-locale LANG=en_CA.utf8
+
+Display a list of all available locales
+localectl list-locales
+
+Display current time and date
+timedatectl
+
+Set timezone
+timedatectl list-timezone | grep X
+timedatectl set-timezone X
+
+# Managing System Hardware
+
+View block devices
+lsblk
+
+Mount partition to particualr directory
+sudo mount X(/dev/X) X(/pat_to_mount)
+
+Display messages for the kernel ring buffer
+dmesg
+
+View hardware details
+lshw
+
+# Managing Linux Packages
+
+Location for Sources list
+/etc/apt/sources.list
+
+Ubuntu Software Repositories
+Main: Supported by Canonical
+Restricted: Proprietary
+Universe: Community supported
+Multiverse: Restricted usage
+
+Third party directories
+sources.list.d/
+
+# Linux Network Connectivity
+
+Check on IP addresses for hostnames
+host DOMAIN-NAME.X
+iftop
+
+# Managing system processes
+
+Viewing logs
+journalctl --since "10 minutes ago"
+
+directory with logs: /var/los
+
+Send command to the background
+- use & at the end of a command

@@ -1,0 +1,63 @@
+-----------------------------------------------
+	Ansible Learning Notes
+-----------------------------------------------
+
+1. Getting Started with Ansible
+
+# Install Ansible
+pip install ansible
+
+# Ansible Ad-hoc Command
+ansible
+
+- used for testing single scenarios
+
+-m (use specific module)
+-a (module arguments)
+-a "src=PATH dest=PATH"
+--check (check if there are any differences, dry-run), not every module might support that flag
+--diff (to check what change will be made), not every module might support that flag
+
+- Sample to copy .gitconfig file to managed nodes
+ansible -m copy -a "src=master.gitconfig dest=~/.gitconfig" localhost
+
+# Idempotence
+- Same outcome, regardless of input and reruns
+
+# Ansible Playbooks
+- Written in YAML format
+- Documentation:
+https://docs.ansible.com/ansible/2.8/user_guide/playbooks_intro.html
+
+- Command to execure Ansible Playbooks
+ansible-playbooks FileName.yml
+
+- Sample Ansible Playbook written in YAML
+
+hosts: localhost
+tasks:
+- copy: src="master.gitconfig" dest="~/.gitconfig"
+
+- Second Sample:
+
+hosts: localhost
+tasks:
+- copy:
+    src: "master.gitconfig"
+    dest: "~/.gitconfig"
+
+- More verbose output
+-v up to -vvvv
+
+# Ansible Inventory
+ansible-inventory
+
+- View details of the inventory
+ansible-inventory --list
+ansible-inventory --graph
+
+
+
+
+
+

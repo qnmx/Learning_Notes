@@ -1,0 +1,218 @@
+### VLANs
+
+ >  VLANs generally fall into three categories
+- Standard:
+  - Standard VLAN range is 1 - 1005
+  - VLAN 1 - Default Ethernet Access VLAN
+  - VLANs 1002 - 1005 - Default legacy Token Ring / FDDI VLANs
+- Extended  - Extended VLAN range is 1006 - 4094
+  - Can normally be used in one of two cases:
+     > VTP is configured in Transparent Mode
+     > VTP Version 3  - Not all extended VLANs can be used, some are reserved for “internal” usage
+- Internal
+  - VLANs reserved for internal applications 
+   > e.g. native layer 3 switchports
+   > show vlan internal usage
+
+# Layer 2 Switchports
+
+Access Switchports - One VLAN
+Trunked Switchports - Multiple VLANs
+Tunnel Switchports - Transparent Layer 2 VPN
+Dynamic Switchports - DTP Negotiation
+
+# Layer 2 Trunking
+
+802.1q- Open Standard- “Native” VLAN sent untagged
+DTP- Dynamic Trunking Protocol
+
+# Disabling DTP Negotiation
+
+> Can be disabled by…
+  - switchport nonegotiate
+  - switchport mode access
+  - switchport mode dot1q-tunnel
+
+# Manual Trunk Pruning
+
+Trunk's “allowed list” controls what VLANs will forward over the link- All VLANs (1-4094) by default
+Allowed list can be edited for manual pruning- switchport trunk allowed vlan
+
+### VLAN Trunking Protocol (VTP)
+
+Used to synchronize VLAN creation between switches
+
+Three modes:
+
+Server
+Client
+Transparent
+
+# VTP Server
+
+Creates VLANs
+Advertises VLANs
+Installs VLANs from other advertisements
+
+# VTP Client
+
+Cannot create VLANs
+Advertises VLANs
+Installs VLANs from other advertisements
+
+# VTP Transparent
+
+Creates locally significant VLANs
+Transparently forwards other VTP advertisements
+Does not install VLANs from other advertisements
+
+# VTP Pruning
+
+Reduces unnecessary replication of..
+
+Broadcasts
+Unknown unicasts
+Unknown multicast
+
+Command for verification: show int …. pruning
+
+VLANs 2 - 1001 are “prune eligible”
+
+To edit prune eligible list: switchport trunk pruning vlan
+
+VTP is Cisco proprietary
+
+# VTP Version 3
+
+VTP version 3 Enhancements
+
+Security enhancements- Fixes configuration revision overwrite problem
+New advertisements- Extended VLANs- Private VLANs- MST configuration
+VTP can be now disabled- Globally- Per Link
+
+### EtherChannel
+
+Technique for aggregating the bandwidth of physical links together.
+
+ > EtherChannels consists of two parts 
+  - Port-Channel interface
+  - Logical interface representing the link bundle
+  - Member interfaces
+  - Physical links that are part of the link bundle
+
+# Cisco's MCEC Implementations
+
+StackWise Cross-Stack EtherChannel
+Virtual Switching System (VSS) Control plane synch over Virtual Switch Link (VSL)(Typically 2 x 10 GigE LAG)
+Virtual Port Channel (vPC)Data Center platforms, e.g. Nexus 5000 / 7000 / 9000Control plane synchronized over a vPC Peer Link, Typically 2 x 10 GigE LAGTwo independent control planes in the vPCTwo independent management planes in the vPCUsually 2 active supervisors and 2 standby supervisors
+
+https://www.cisco.com/c/en/us/td/docs/solutions/Enterprise/Campus/VSS30dg/campusVSS_DG/VSS-dg_appa-configs.html
+
+https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-virtual-switching-system-1440/109547-vss-best-practices.html
+
+# EtherChannel Negotiation Protocols
+
+LAG negotiation comes in two forms
+
+Port Aggregation Protocol (PAgP)
+Link Aggregation Control Protocol (LACP)
+
+Static LAG is supported but not recommended
+
+Failure to LAG can cause an STP loop
+EtherChannel Guard can help mitigate this
+
+EtherChannel Negotiation Modes
+
+LAG is configure as…channel-group [number] mode [mode]
+
+# EtherChannel Load Balancing
+
+LAG driver is responsible for load distribution amongst members
+
+LAG is independent of the port mode- e.g. LAG can be access, trunk, tunnel, layer 3, etc.
+
+### Spanning-Tree Protocol
+
+# STP Convergence Optimizations
+
+PortFast
+UplinkFast - Direct Root Port failure should reconverge immediately if Alternate Port available
+BackboneFast - Indirect failures should start recalculating immediately
+
+# STP Filters
+
+BPDU Filter - Filter BPDUs in and out
+BPDU Guard - If BPDU is received shut port down
+Root Guard - If superior BPDU is received shut port down (most of the time, implemented on the Designated Ports)
+
+Filters can be configured globally in conjunction with PortFast
+
+# STP Loop Prevention
+
+Loop Guard - Prevent unidirectional links by using BPDU keepalives
+UDLD - Prevent unidirectional links by using UDLD keepalives
+
+https://www.cisco.com/en/US/docs/switches/metro/me3600x_3800x/trash/swstpopt.html
+
+https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960/software/release/12-2_40_se/configuration/guide/scg/swstpopt.pdf
+
+https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst3560/software/release/12-2_55_se/configuration/guide/3560_scg/swstpopt.html
+
+
+
+### Rapid Spanning Tree Protocol
+
+New standard originally defined in IEEE 802.1w
+Now incorporated as IEEE 802.1D-2004
+
+# RSTP Link Types
+
+Non-edge ports fall into two types
+Point-to-point - Full-Duplex ports
+Shared-Half-Duplex ports
+
+
+
+### Multiple Spanning Tree Protocol
+
+Started as Cisco's MISTP
+Originally standard defined in IEEE 8021.s
+Now standard per IEEE 802.1Q-2005
+
+# How Does MST Work?
+
+MST works by decoupling VLAN & STP Instance- STP Instance to VLAN mapping is user defined- Topology calculation done by RSTP
+
+# MST Regions
+
+MST defines a Region as bridges that agree upon…- Instance number- Revision number- VLAN to STP instance mappings
+
+Intra vs Inter Region
+
+Intra Region
+
+Details of the region are known within the region
+VLAN to STPIs are manually defined
+Undefined VLANs fall into CIST (MST 0)
+
+Inter Region
+
+Details between regions are not known
+Different regions see each other as virtual bridges
+Result is simplified Inter-Region calculation
+Intra-region MSTIs are collapsed into CIST
+
+CIST - Common Internal Spanning Tree
+
+# MST Configuration
+
+Define the following in MST configuration mode (spanning-tree mst configuration)
+
+Region name
+Revision number
+VLAN to instance mappings
+
+Enable MST globally 
+
+Real deployment must start at Root and work out

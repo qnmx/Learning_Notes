@@ -1,0 +1,446 @@
+### Junos Operating System Fundamentals ###
+
+OS Release numberingm.nZb.sm.n - Main and Minor Release NumbersZ - Release Typeb - build numbers - Spin Number
+
+The most common type of release is the R release typeThe R1 release is the first revenue ship (FRS) releaseThe R2, R3, and following release are maintenance releases
+
+# Routing Engine
+
+JUNOS
+Routing Table
+Routing Protocols
+Administrator
+Test (ping, etc.)
+
+# Packet Forwarding Engine
+
+Forwarding Table
+HW Based Packet Movement
+CoS & Policing Enforcement
+Stateless Filter Enforcement
+
+### Junos CLI Operational Mode
+
+Help with Configuration Syntax
+
+help topic …help reference … - offers configuration syntaxhelp apropos - offers configuration syntax help
+
+### Junos CLI Configuration Mode
+
+Multiple users (up to 32 users) can enter and commit changes in configuration mode
+Use the configure exclusive command to exclude other users from editing the configurationAny uncommitted changes are discarded when users exit
+Use the configure private command to enable users to edit private copies of candidate configuration concurrentlyWhen users issue a commit, their private changes merge back into the global configurationIf private users issue a rollback 0 command, the software discard only their changes
+Use set to add configuration statements
+Use the delete command to remove statements
+Use the deactivate command to cause the specified portion of the configuration hierarchy to be ignored while still retaining the original configuration
+Use the activate command to place the configuration back into effect
+
+You just disabled an interface with a set interfaces <interface-name> disable statement. How do you re-enable this interface?
+
+Issue a delete interfaces <interface-name> disable command to delete the disable statement placed into effect with the referenced set command.
+
+If multiple Routing Engines (REs) are installed, use the commit synchronise command
+Use the commit confirmed command to temporarily activateWait 10 minutes (default) for user to enter second commit. If not confirmed, rollback the configuration
+Use commit at to schedule a future commitshow system commitclear system commit
+You can complete the commit process in two steps:- Use commit prepare to validate the configuration- Use commit activate to apply the configuration changes
+Compare activate and historical configurations:show configuration | compare rollback <number>
+Compare arbitrary files:file compare files <filename1> <filename2>
+A rescue configuration permits you to define a known working configuration
+Issue the request system configuration rescue save command to save the most recently committed configuration as the rescue configuration
+The ephemeral database is an alternate configuration database that provides a fast programmatic interface for performing configuration updates on devices running Junos OS
+Is advantageous in dynamic environments where fast provisioning and rapid configuration changes are requiredEphemeral databases - https://www.juniper.net/documentation/us/en/software/junos/junos-xml-protocol/topics/concept/ephemeral-configuration-database-overview.html
+Use the save command to save current configuration. The command save <filename>
+Use the load command to load a configuration file
+
+### J-Web Interface
+
+J-Web uses the same authentication methods as the CLI
+Enable the HTTP or HTTPS service under the [ edit system services ] hierarchy level
+
+[ edit system services web-management ]
+
+http {       interface X;}https {         system-generated-certificate;         interface all;}
+
+### Initial System Configuration
+
+# Loading a Factory-Default Configuration
+
+Use the load-factory-default command to:- Return a device to a factory default configuration- Overwrite the candidate configuration- Must set root password to activate configuration  set system root-authentication plain-text-password
+
+# Gracefully Shutting Down the Junos OS
+
+Gracefully shut down the Junos OS before removing power- Use the request system halt command to gracefully halt the Junos OS and help ensure file system integrity  New command to power off: request system power-off- When the Junos OS has been halted, system power is maintained
+
+# The Rescue Configuration
+
+Use the request system configuration rescue save command to save the active configuration as the rescue configuration using the CLI's operational mode
+
+# User Authentication
+
+Password Complexity Requirements- Minimum length of 6 characters- Can include most character classes: Alphabetic, Numeric, Special (except control characters)- Must have at least one change of case or character class
+
+set system login user <username> authentication plan-text-password
+
+# Predefined Login Privilege Classes
+
+operator: clear, network, reset, trace, view; no configuration changes are allowed
+read-only: view
+super-user: all
+unauthorised: none
+
+# Centralised User Authentication
+
+Configuring a RADIUS Clientset system radius-server <IP address> secret <password>
+Configuring a TACACS+ Clientset system tacplus-server <IP address> secret <password>
+
+
+Set the identification parametersHostname: set host-name NAME
+Set the time parameters: set system time-zoneset date - at operational level
+Set management access parametersSSH: set system services ssh root-login allowJ-Web: set system services web-management http interface fxp0.0
+Set the idle timeoutAt operational mode: set cli idle-timeout VALUE - only applied to the current sessionConfiguration mode: set system login idle-timeout VALUE - permanent idle timeout for all sessions
+Set the login messageset system login message “VALUE”
+Configure a Static Route for Managementedit routing-optionsset static route X.X.X.X/X next-hop X.X.X.X no-readvertiseAdd “no-readvertise” to avoid the route being re-advertised into any other routing protocols
+
+# Interface Types
+
+Management - fxp0, me0
+Internal - fxp1, em1 - connects the control and forwarding planes
+Network - ge, xe, et - provides media-specific network connectivity
+Services - provide specific capabilities for manipulating traffic before it is delivered to its destinationes - encryption interfacegr - GRE tunnel interfaceip - IP-over-IP encapsulation tunnel interfacels - Link service interfaceml - Multilink interfacemo - Passive monitoring interfacemt - Multicast tunnel interfacesp - Adaptive services interfacevt - Virtual tunnel interface
+Loopback - lo0 - Junos devices use the lo0 designation for this interfaceOnly one loopback interface exists, more cannot be createdOnly one logical unit can be created per routing instance
+
+Most interfaces are named according to:- Interface media type - ge, xe, et- Line card (FPC) slot number- Interface card (PIC) slot number- Port numberExample:ge-0/2/3 = port 3 of a Gigabit Ethernet PIC in slot 2 on FPC 0
+
+Logical Units- similar to subinterfaces used by other vendors
+
+Interface Properties
+
+Physical properties settings include:- Data Link Layer protocol- Link speed and duplex- Speed- Physical MTU- Clocking- FCS- Scrambling- Diagnostic characteristics
+Logical properties settings include- Protocol family: inet, inet6, ISO (is-is), mpls, ethernet-switching- Addresses (IPv4 and IPv6 addresses and ISO NET address)- VLAN tagging- Firewall filters that are operating on the interface
+
+Physical and logical interface properties are configured at their respective levelinterfaces <interface-name> physical-properties
+
+interfaces <interface-name> unit <unit-number> logical-properties
+
+
+
+Ether-switching cannot be configured along with other protocol families
+Configuration of multiple IP addresses is supported on Juniper devices
+Use the preferred option to select source address when trying to reach an address on that same networkBy default a numerically lowest local address is chosen
+Use the primary option for source address when packet transfer originates from the interface and the destination address does not indicate the subnetBy default a numerically lowest address is chosen as a primary
+
+# NTP
+
+RFC 5905
+Configure NTP Boot Server. Tell Junos which NTP server to get its time from when it boots upset system ntp boot-server (name | ip-address)
+Configure an NTP Reference Serverset system ntp server (name | ip-address)
+NTP Verification Commandsshow system uptimeshow ntp statusshow ntp associations
+
+# SNMP
+
+Management Information Base (MIB)- Hierarchical database of status information and statistics- Branch and leaf structure- Standard (IETF) and proprietary- SNMP Managers view or change objects in the MIB
+Object Identifier (OID)- Unique string of numbers identifying the branch or leaf in the MIB
+SNMP Message Types:- Get - requests to the agent. Agent responds with data. Port 161.- Set - Manager changes the value of a MIB object. Agent responds with status.- Notification - Agent send “traps” to notify the manager of events e.g. link down. Port 162.
+Enable the SNMP v2c Agent- Configure either the common community “public” or another community and specify the permissions. Best practice to specify IP address or range for SNMP managers to accept connections fromset snmp community (community | public) authorization (read-only | read-write) clients (prefix)
+Configure SNMP Trapsedit snmp trap-group NAME categories ?edit snmp trap-group NAME targets IP_Addr (NMS)
+
+# Archiving
+
+Junos active configuration is stored in /config/juniper.conf.gz
+Manual File Copy- Default to SCP and will attempt connect with the user account logged into the devicefile copy /config/juniper.conf.gz server:/directory
+Configure Archive Sites- Junos tries these in order and if the first one works, then it won't use the next in the listset system archival configuration archive-sites ftp://username:password@server/dirset system archival configuration archive-sites scp://username:password@server/dir
+Configure When to Archiveset system archival configuration archive-sites transfer-on-commit
+
+# System Logging
+
+configuration available at edit system syslog
+to view log messages: show log messages
+saved at /var/log
+
+# Trace Files
+
+Other vendors call this debugging. Used to troubleshoot specific issues
+Should be turned off when no longer required
+Specify what information to log and destination to send it to (file or remote server)
+Traceoptions configured at various level e.g. [edit protocols ospf]
+delete traceoptions - to stop tracing
+To send tracelogs to remote destination:set system tracing destination-ovveride syslog host (IP address)
+To view traceoptions at terminalmonitor start FileName
+
+# Configuration Groups
+
+Allow repetitive configuration chunks to be organised in a template
+Group configuration occurs at the [edit groups] hierarchy
+It's possible to determine if a particular configuration comes from groups, by using the “display inheritance” pipe parameter
+To match all interfaces: <ge-*>
+To match any character (static route, IP address, etc.): <*>
+
+### Operational Monitoring and Maintenance
+
+Monitoring the Systemshow system ?show system connections - to show all active connections to the deviceshow system storage - to check current state of storage space
+Monitoring the Chassisshow chassis ?
+To view details of the front-panel LEDshow chassis craft-interface
+To view hardware detailsshow chassis hardware
+Monitor Network Interfacesshow interface ?monitor interface ?
+Real-time Traffic Monitoringmonitor trafficThis is a packet capture on an interfacemonitor file_nameto stop: ESC+q
+To cleanup system storagerequest system storage cleanup (dry-run)
+
+# RPM -Real-Time Performance Monitoring
+
+RPM allows the device to create accurate traffic measurements
+Tests can be created to get a measure on packet loss, jitter and round trip time
+TCP and UDP probes are Juniper proprietary
+Receiving device needs to be configured to be an RPM receiver in order for such tests to work properly
+Configured in the [services rpm probe-server] hierarchy
+
+# Upgrading the Junos OS
+
+Perform a snapshot of the system configuration and current Junos versionrequest system snapshot slice alternatepotentially disruptive command
+Specify the URL or pathname of package. Can be local or remote FTP or SCP location
+Reboot is required to activate - add ‘reboot’ at the end to do this automatically
+request system software add <package-name>
+
+# Root Password Recovery Process
+
+Requires console connection
+Reboot and hit spacebar when prompted (second prompt)
+Enter “single user” mode by typing “boot -s”
+Enter “recovery” mode
+Set the root password and commit change
+Reboot when prompted
+
+
+
+### Routing Fundamentals
+
+View routing table: show route
+
+# Route Preference Defaults
+
+direct 0
+local 0
+system routes 4
+static and staic LSPs 5
+RSVP-signaled LSPs 7
+LDP-signaled LSPs 9
+OSPF internal 10
+IS-IS Level 1 internal 15
+IS-IS Level 2 internal 18
+Redirects 30
+Kernel 40
+SNMP 50
+router discovery 55
+RIP 100
+RIPng 100
+DVMRP 110
+aggregate 130
+OSPF AS external 150
+IS-IS Level 1 external 160
+IS-IS Level 2 external 165
+BGP (internal and external) 170
+MSDP 175
+
+# Pre-defined Junos Routing Tables
+
+inet.0 - IPv4 unicast routes
+inet.1 - Multicast forwarding cache
+inet.2 - Multicast Border Gateway Protocol (MBGP) routes to provide reverse path forwarding (RPF) checks
+inet.3 - MPLS path information
+inet.4 - Multicast Source Discovery Protocol (MSDP) route entries
+inet6.0 - IPv6 unicast routes
+mpls.0 - MPLS next hops
+
+# Forwarding table
+
+To view forwarding table: show route forwarding-table
+perm - permanent route, installed by the Junos kernel
+user - route come from routing protocol or user configuration
+intf - installed in a table as a result of configuring an interface
+dest - remote subnet, reachable via interface
+
+# Routing Instance
+
+Collection of routing tables, interfaces, and routing protocol parameters
+Multiple routing tables within a routing instance e.g. IPv4 and IPv6
+Unique name and associated unicast IP routing table e.g. customerA.inet.0
+Default routing instance called “master” linked to the main inet.0 routing table
+
+# Routing Instance Types
+
+forwarding: to implement Filter-Based Forwarding
+l2vpn: used in layer 2 VPN
+no-forwarding: used for administrative separation
+virtual-router: used for router device virtualisation
+vpls: used for VPLS (L2) implementations
+vrf: used in MPLS (L3) implementations
+
+To configure:
+
+set routing-instances Additional_Instance instance-type virtual-router
+
+set routing-instances Additional_Instance interface X
+
+# Static Routing
+
+Configured manually at the [edit routing-options] level of the configuration hierarchy
+IPv4 Default Static Routeset static route 0.0.0.0/0 next-hop X.X.X.X (no-readvertise)
+IPv6 Default Static Routeset rib inet6.0 static route ::/0 next hop 2000::1
+Static Route with an Indirect Next HopNext hop is not directly connected. Specify “resolve” to make Junos do a recursive lookup of the next hopAlso requires a route to to the next hop, preferably learned from a dynamic protocol such as OSPFset static route 1.1.1.1/32 next-hop X.X.X.X.X resolve
+Static Route with a qualified next hopUse preference to make sure the 2nd route is not used unless the first route is downOther vendor call this a “floating static route”qualified-next-hop X.X.X.X preference X
+
+# Dynamic Routing Protocols
+
+Adding a Link into OSPFSpecify the area number and interfaceJunos assumes unit 0 if not specifiedOptionally use “passive” option to prevent neighbour adjecencies forming on an interfaceset protocols ospf area 0 interface X (passive)
+Display OSPF Neighbour Adjecenciesshow ospf neighbor
+
+
+
+### Routing Policy and Firewall Filters
+
+# Routing Policies
+
+Routing polices control the flow of routing information into and out of the routing table
+Applied at the point of entry to and exit from the routing table
+Modify route attributes as they enter or leave the routing table
+
+# Routing Policy Types
+
+Import: Applied before routes enter the routing table. Control which routes enter the table
+Export: Applied as active routes are advertised to a neighbour or installed in the forwarding table
+
+# Default Policies - BGP
+
+BGP's import policy is to accept all BGP routes
+BGP's export policy is to send all active BGP routes
+
+# Default Policies - OSPF
+
+OSPF's import policy is to accept all OSPF routes
+OSPF's export policy is to reject all OSPF routes; the protocol floods routing information
+OSPF routes can not be restricted via import policy
+
+# Default Policies - IS-IS
+
+same as OSPF
+
+# Default Policies - RIP
+
+RIP's import policy is to accept all RIP routes
+RIP's export policy is to reject all RIP's routes; custom policy needs to be configured in order to export routes
+
+# Routing Policy Definition
+
+Defined at the policy-options level of the configuration [edit policy-options]
+Term1 else if Term2 else if default protocol policies
+policy-statement NAME - User-defined name for the policy; Should be meaningful to aid in troubleshooting
+term NAME- User-defined term- A Policy can contain zero or more terms- Evaluated sequentially until terminating action or end of policy- if…then statements- Can be re-ordered if required with the “insert” command
+from protocol [rip direct]- “if” part- Defines the criteria to match routes against- Logical OR for single match criteria- Logical AND for multiple match criteria
+then accept- “then” statement- defines the actions to take against routes that match the “from” statement- If a terminating action (accept/reject) then evaluation stops- First match
+
+# Prefix-List
+
+List of subnets
+configured at the policy-options prefix-list configuration level
+Two uses in “from” statements- Prefix list statement (matches only if an exact match with a prefix on the list)- Prefix list filter can use match types (exact, longer, orlonger)
+
+# Route Filter
+
+List of prefixes
+Can only be used within a single routing policy or policy term
+Can use match typesexact, longer, or orlonger, through, upto, prefix-length-rangeupto, through - include last route as well
+Can specify an actions in the from statement
+
+# Routing Policy Actions
+
+Terminate policyAcceptReject
+Control flowNext-termNext policy
+Modify attributesBGP communitiesRoute preference
+
+# Multiple Filters Evaluation
+
+A specific term within a routing policy can accept more than one route filter
+When more than one route filter in the match criteria exists, an ‘OR’ logic is used among filters
+An ‘AND’ logic is still used to combine the filter with other match criteria
+When a route matches more than one filter, the longest prefix is matched, regardless of the match type applied to the filter
+
+# Routing Policy Application - Hierarchy Levels
+
+BGP: Protocol, group, neighbour
+
+OSPF, IS-IS: Protocol
+
+RIP- Protocol and neighbour (import)- Group (export)
+
+
+
+Only the most specific policy applied
+
+Understanding Route Filters for Use in Routing Policy Match Conditionshttps://www.juniper.net/documentation/us/en/software/junos/routing-policy/topics/concept/policy-configuring-route-lists-for-use-in-routing-policy-match-conditions.html
+
+# Firewall Filter Concepts, Match Criteria and Actions
+
+Access Control List (ACL)
+Stateless
+Defined at the firewall level of the configuration and the protocol family[edit firewall family inet]
+filter NAMEUser-defined name for filter
+discard - silently drop the packet
+reject - drop the packet and send ICMP unreachable message
+If there are multiple matching criteria in one term, all must match to take effect. AND operation
+Any packet that do not match specific term are discarded by default
+If a filter term matches, and the action is a modifier with no accompanying terminating action then it is accompanied by an implicit accept optionterm 1from {A}then {log} # implicit accept
+The implicit accept action can be negated through use of the next term flow control actionsthen {log; next term;}
+
+# Match Criteria - IP Addresses
+
+Source address
+Destination address
+Address (regardless of whether it's src or dst)
+Source Prefix list
+Destination Prefix list
+Prefix list (regardless of whether it's src or dst)
+
+# Flow Control
+
+The only control action available in firewall filters is the ‘next-term’
+Given that action modifiers have a default ‘accept’ action attached to them, you might want to modify the packet and still have it be evaluated against more criteria in the filters
+
+# Control Plane Protection
+
+Standard Firewall Filter protects transit traffic
+To control access to Control Plane, apply a filter at loopback interface
+
+# Firewall Filter Application
+
+Applied at the interface level[interfaces X.X.X unit X family inet]
+set filter [input output]
+
+# Define Policer
+
+configured at firewall level
+set policer NAME
+reference Policer in the Firewall Filterthen policer NAME
+Policer can be referenced in multiple filters
+
+# Monitoring Firewall Activity
+
+show firewall filter NAME
+show firewall counter filter NAME
+show firewall log
+clear firewall filter NAME counter NAME
+
+# Unicast Reverse Path Forwarding (RPF) Checks 
+
+RPF is a security mechanism to prevent IP address spoofing- Checks that packets are received on the expected interface- Checks for an active route to the packet source- If the check fails then the packet is dropped
+uRPF is not needed all across the topology; enable on routers with untrusted networks
+Strict ModeDefault/preferred mode. Looks for an active path to the source IP address
+Loos ModeOnly checks for a valid route, so a default route would be acceptable
+RPF checks can be used with firewall filters
+Enable the “feasible paths” option to allow for asymmetric routingThe Feasible Path option accepts traffic from inactive paths if they're valid to the destination.Applied at [edit routing-options forwarding table] unicast-reverse-path feasible-paths
+uRPF is applied at [edit interfaces X.0 family X]
+
+# Fail Filters
+
+Fail filters are a special type of firewall filter
+Fail filters act on traffic failing uRPF check
+It's not possible to log packets dropped by uRPF via regular filters; fail filters can
+uRPF checks happen before firewall filters

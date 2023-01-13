@@ -1,3 +1,124 @@
 ### CCNA Wireless Learning Notes ###
 
+### Fundamentals
 
+# Terms to Remember
+
+SSID - the network name
+BSSID - the associated MAC address
+MBSSID - when an AP supports more than one BSSID
+BSA - Basic Service Area - Area covered by the AP
+BSS - Basis Service Set - The service provided by the AP
+DS - Distribution System - The function of the AP to send the traffic to the wired network
+ESS - Extended Service Set - Connection between two APs over the wire network
+channel - the frequency the AP uses
+roaming - a function of moving from one BSA to the other
+
+# The Decibel Scale
+
+0 dB: the power you are looking at is exactly your reference power
++3 db: twice the reference power
+-3 dB: half the reference power
++10 dB: ten times the reference power
+-10 dB: one tenth (1/10) of the reference power
+Always start with the tens if you can!
+
+Access Point use milli Wats for their power
+
+# Antenna Power: dBi and dBd
+
+Antenna Power - dBi (vs. Isotropic)
+
+Isotropic antenna
+- 1 dot large
+- Sends exactly the same energy in all directions
+- Does not exist in real world
+- dBi scale
+
+Antenna Power - dBd (vs. Dipole)
+
+Refers to dipole (AKA “rubber duck”)
+Simplest real world antenna
+0 dBd = 2.14 dBi
+
+# EIRP
+
+Effective Isotropic Radiated Power
+Measures the radiated power (out of the antenna):
+EIRP = Tx - loss + Antenna gain
+
+
+
+### Antennas
+
+# Antenna Principles
+
+The antenna “gain” simply shows on the direction where your antenna sends more than the isotropic, “how much more energy your antenna is sending in that direction, compared to what an isotropic antenna would send”
+Antenna gain is always passive gain
+Depending on the antenna type and make, there will be more or less gain in any direction
+Gain is always measured in the direction of maximum energy increase
+
+
+
+Top view is the Horizontal Plane (H-plane) or Azimuth Plane
+Side view is the Elevation Plane (E-plane) or Vertical PlaneMake sure you know, for example when using side view, “from which side” the antenna pattern is seen
+
+# Beamwidth
+
+Beamwidth determines the “useful area” of the antenna signal
+80% of the radiated energy will be there
+Calculated as the angle at which the energy decreases by 3 dB (half) compared to max power direction
+
+# Antenna Types
+
+An antenna with which signal goes in all directions (in at lease one plane) is called Omnidirectional Antenna
+An antenna with which signal goes in one direction (no “omni plane”) is called Directional Antenna
+
+# Directional Antennas
+
+Patch antenna
+Yagi antenna (Yagi Ude)
+Dish antenna
+
+# Omnidirectional Antennas
+
+Omnis are found in access points that are placed in the centre of the coverage area
+Omnis are also found in most client devices
+
+# Polarization
+
+Antenna signal is not the same in E-plane and H-plane
+This is because the antenna signal is polarized - the signal sent has an orientation
+
+# Other Accessories
+
+You can use an Amplifier to increase the Tx power sent to the AP
+The amplifier is active (not passive gain)
+You can use an Attenuator to reduce the Tx power sent to the AP
+The attenuator is passive (absorbs predictable amount of energy)
+You can use a splitter to send the AP signal to 2 antennas
+Splitters induce attenuation, usually not recommended
+To protect the AP from outdoor static, you can use a “lightning arrestor” (does not really stop lightning strikes)
+If you need to protect your network against lightning striking an outdoor AP, you need to insert fiber between the AP and the network
+
+# Frequency
+
+RF Waves are signals that go “up and down” in cycles
+Frequency shows how often a cycle happens: 1 time per second = 1 Hertz
+1 million cycles per second = 1 MHz
+1 billion cycles per second = 1 GHz
+
+# Wavelength
+
+RF waves travel at speed of light
+Wavelength is simply the physical length of a cycle
+Speed of light = 300 000 km/s (or 186 000 miles/s)
+2 Hertz = 2 cycles /s
+Wavelength = 150 000 km (or 93 000 miles)
+1 Mhz Wavelength = 300 m (or 0.186 miles)
+1 GHz Wavelength = 30 cm (or about 1 foot)
+
+# Amplitude
+
+Amplitude measures the amount of energy sent in each wave
+Measured as the distance between crests

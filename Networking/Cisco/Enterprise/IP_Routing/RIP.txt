@@ -1,0 +1,43 @@
+### RIPv2 Summarization
+
+Automatic
+
+At classful network boundaries to the classful network itself (network level)
+Disabled with no auto-summary
+
+Manual
+
+Interface level (ip summary-adress rip ip-addr mask)
+
+### Route Filtering with RIPv2
+
+# Distribute Lists
+
+Refer to an Access or Prefix List- Access/Prefix List “permit” allows the route, “deny” filtersdistribute-list [acl | prefix prefix-list] out [interface | routing-process | as-number]distribute-list [acl | prefix prefix-list] out interface
+
+# Offset Lists
+
+Changes the metric of a route- A metric of 16 effectively filter the route
+Configure with offset-list acl [in | out] offset interface
+
+# Administrative Distance
+
+Setting the AD to 255 prevents a route from being installed in the RIB
+Configure with distance AD ip-addr wildcard-mask [acl]
+
+# Passive Interface
+
+passive-interface [default] interface
+
+### RIPng
+
+# RIPng Configuration
+
+Enable IPv6 Routing and define RIPng process
+
+ipv6 unicast-routing
+ipv6 router rip pname- Multiple processes cam be configured
+
+Enable RIPng on interfaces
+
+ipv6 rip pname enable

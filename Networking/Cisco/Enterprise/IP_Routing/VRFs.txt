@@ -1,0 +1,42 @@
+### VRF - Virtual Routing and Forwarding
+
+VRF is a L3 traffic isolation technology
+VRFs create “virtual routers”
+- VRF defines a new instance of the routing table
+- Interfaces assigned to the VRF belong to that routing table
+- Interfaces not in a VRF are in the “global” or “default” VRF
+
+# VRF-Lite: Initial Configuration
+
+Create VRF globally and apply descriptive name:
+- Router(config)#ip vrf Company-A
+Apply VRF to selected interfaces
+- ip vrf forwarding Company-A(command removes any IP settings that were previously configured on the interface)
+
+# VRF Verification Commands
+
+show ip vrf <name>
+show ip vrf interfaces <name>
+show ip route vrf <name>
+show ip protocols vrf <name>
+
+# EIGRP VRF Configuration
+
+router eigrp AS
+address-family ipv4 vrf <name> autonomous-system AS (This AS is different than global AS; can be a random AS number)
+network X.X.X.X X.X.X.X
+
+OSPF VRF Configuration
+
+each OSPF process must have a unique Process-ID (whether a VRF or Global process)
+router ospf 1 vrf <name_1>
+network x.x.x.x x.x.x.x area x
+capability vrf-lite
+
+router ospf 2 vrf <name_2>
+network x.x.x.x x.x.x.x area x
+capability vrf-lite
+
+Same “show” commands for OSPF verification apply whether for VRFs or not, just supply the process-id
+- show ip ospf 1 neighbors
+- show ip ospf 1 database

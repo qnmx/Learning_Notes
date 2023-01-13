@@ -1,0 +1,261 @@
+### Border Gateway Protocol Version 4
+
+Standards based
+- RFC 4271 "A Border Gateway Protocol 4 (BGP-4)
+Exterior Gateway Protocol (EGP)
+- Used for inter-domain routing between Autonomous Systems
+Path vector routing
+- Uses multiple “attributes” for routing decision
+Classless
+- Support VLSM and summarization
+
+# Establishing BGP Peerings
+
+Like IGP, first step in BGP is to find neighbors to exchange information with
+Unlike IGP…
+- BGP does not have its own transport
+  Uses TCP port 179
+- BGP neighbors are not discovered
+  Manually configured via neighbor statement
+- BGP neighbors do not have to be connected
+  IGP is always on a link-by-link basis
+  BGP is a logical peering over TCP
+  Implies that BGP always needs IGP underneath
+- BGP has different types of neighbors
+  External BGP vs. Internal BGP
+
+# BGP Packet Formats
+
+Peering establishment and maintenance uses four types of packets:
+- OPEN
+- KEEPALIVE
+- UPDATE
+- NOTIFICATION
+
+# BGP OPEN Message
+
+Used to negotiate parameters for peering
+Includes…
+- BGP version (should be 4)
+- Local ASN- Local Router-ID
+- Hold time (Negotiated to lowest requested value)
+- Options, aka “capabilities”
+
+# BGP UPDATE Message
+
+Used to advertise or withdraw a prefix
+Includes
+- Withdrawn routes
+  List of routes that should be discarded
+- NLRI
+  Route being advertised
+- Path vector attributes
+  Attributes of route being advertised
+  Used for best-path selection
+
+# BGP NOTIFICATION Message
+
+Used to convey error messages
+After notification sent, BGP session is closed
+Examples
+- Unsupported Version Number
+- Unsupported Optional Parameter
+- Unacceptable Hold Time- Hold timer Expired
+
+# BGP Peering State Machine
+
+BGP state machine tracks peering establishment
+Idle
+- Waiting to start 3-way handshake
+Connect
+- Waiting to complete 3-way handshake
+Active
+- 3-way handshake failed, try again
+Open sent
+- 3-way handshake complete, OPEN message sent
+Open confirm
+- OPEN message received, parameters agreed upon
+Established
+- Peering complete
+
+# Time to live values for iBGP and eBGP
+
+eBGP = 1 iBGP = 255
+
+Changing a Router-ID causes a reset of the neighbor relationship
+
+# Local Preference attribute - a default value of 100 is sent to only internal BGP neighbors. We do not send this value to an external BGP neighbors.
+
+# Additional ways of injecting routes:
+
+Aggregate (summary) routes
+- At least 1 more specific route that belongs to the summary must be in the BGP table
+BGP inject-map
+- Doesn't require the route to be in the BGP table, and is conditional based on policy
+
+# Synchronisation Rule
+
+Off by default
+If on, then all the BGP routes must ALSO appear, via an IGP, otherwise we won't use them.
+
+=======================CCNP Notes=======================
+
+# Overview of iBGP and eBGP
+
+When routes are advertised to an eBGP peer, a BGP router updates the AS_Path PA, but it does not do so when advertising to an iBGP peer.
+The range for public and private AS numbers is:
+- Public AS numbers 1 - 64495
+- Private AS numbers 65512 - 65534
+The following numbers and ranges are reserved:
+- 0, 64496 - 65511, 65535
+
+# eBGP Neighbourship Overview
+
+BGP form neighbourship using TCP port 179
+To configure authentication for BGP, used the following command:
+neighbor neighbor-ip password key (BGP subcommand)
+
+# BGP AS_SEQ Attribute
+
+BGP uses multiple path attributes to determine the best path for certain prefix
+By default, if no BGP PAs have been explicitly set, BGP routers use the BGP AS_PATH (autonomous system path) PA when choosing the best route among many competing routes.
+ASSEQ is the component of the ASPATH attribute
+
+# Injecting Routes into BGP
+
+There are a few ways to inject routes into BGP:
+- By using the BGP network command
+- By using redistribution
+- By using route summarization
+The BGP network command looks for the exact prefix/length matches in the IP routing table, and originates that prefix/length into the BGP table
+If the mask parameter is omitted, IOS assumes a classful network mask
+By default auto-summary is disabled
+If auto-summary is configured but mask parameter is configured with the network command, the logic of the network statement is not affected.
+When auto-summary is configured, the logic of the network statement changes only if the mask parameter is omitted
+
+# Injecting Routes Using Aggregation
+
+Another way to add routes into the BGP table is by using BGP summarization
+To configure BGP summarization/aggregation,use the following command: aggregate-address prefix prefix length [summary-only]
+The prefix/prefix-length in the above command is the summary route
+The summary-only keyword is used when subordinate routes do not need to be advertised with summary route
+When any subnet route (subordinate routes) of prefix/prefix length exists in the BGP table, summary route is injected into the BGP table
+When subset routes (sub-ordinate routes) are not advertised with summary route, they are suppressed and can be recognized in BGP by the code ‘s’ beside them
+
+# Examining iBGP BGP Table Entries
+
+When a BGP-enabled router advertises routes to its BGP neighbour, the following two rules apply:
+- Only advertise the best route in any BGP update
+- Do not advertise iBGP-learned routes to iBGP peers
+The second rule prevents loops for iBGP routes, it is also known as split-horizon rule for iBGP
+
+# Next-Hop Reachability Issue with iBGP
+
+When routes are advertised to an eBGP neighbour, the next-hop IP address is changed by the advertising router
+When routes are advertised to an iBGP neighbour, the next-hop IP address is not changed by the advertising router, by default
+When a route is received from an ISP, the next-hop IP address would be the IP address of the ISP router
+This route, when advertised to an iBGP neighbour's next-hop IP address, remains the same (ISP router's IP)
+If the internal routers do not have a route to that ISP's link or the next-hop IP address, that route will not become the best path for BGP
+BGP will not even run the Best Path algorithm through that path
+The most common ways to resolve this issue is:
+- Advertise that link into the internal network
+- Use the neighbor next-hop-self
+A router with this command configured advertises iBGP routes with its own update-source IP address as the next-hop IP address
+
+# Issues with iBGP Route Advertisement
+
+iBGP neighbours prevent loops by NOT advertising iBGP learned routes to one another
+This can cause problems with BGP route advertisement
+To resolve this issue:
+- Run iBGP full mesh
+- Redistribute BGP routes into IGP (synchronization) - This is not ideal and not recommended. This method requires internal routers to have large memory and large amount of processing power. This method of avoiding routing loops is also known as synchronization, which can be defined as, “Do not consider an iBGP-learned route as ‘best' unless the exact prefix was learned via an IGP and is currently in he IP routing table” - Synchronization is disabled by default
+- Use BGP route reflectors
+- Use BGP confederation
+
+# BGP Filtering
+
+BGP filtering can be done on any router
+BGP can be done for inbound and outbound updates
+After filtering is applied, BGP neighbour relationship must be reset or cleared for the filter to take effect
+BGP filtering can be done by using any of the following methods:
+- distribute-list
+- prefix-list
+- filter-list
+- route-map
+Distribute-list references standard or extended access-lists, which can match prefix with WC mask or prefix and prefix-length with WC mask, respectivelyneighbor distribute-list
+When filtering with prefix-list, prefix-list can be used to match exact or “first N” bit of prefix plus range of prefix lengthsneighbor prefix-list
+Filter-list can be configured using the: ip as-path access-list command
+- It can reference AS_PATH contents
+- neighbor filter-list
+
+# BGP Filtering using Route-map
+
+Route-map can reference ACLs, prefix-lists, and as-path access-list
+It can filter based on prefix, prefix-length, and BGP path attributes
+To configure use neighbor route-map
+
+# BGP Path Attributes
+
+BGP uses different path attributes to calculate the best path to a certain destination
+The most common BGP path attributes are:
+- Weight
+- Local Preference
+- AS_PATH
+- Origin
+- Multi Exit Discriminator
+
+# Path Attribute Manipulation
+
+Weight, LOCAL_PREF, and AS_Path can be changed to influence the outbound traffic
+AS_Path and MED can be changed to influence inbound traffic
+
+Influencing BGP Weight
+
+Weight is not generally considered a path attribute; it is a Cisco proprietary feature
+It is locally significant to a single router and is not advertised to any other BGP neighbours as a part of an Update message
+It can be used to influence the choice of outbound routes
+It is set on inbound routes
+A bigger value is preferred for it
+The default value of weight is 0 for learned routes and 32768 for locally injected routes
+To change weight value, use the following commands:
+neighbor route-map (per prefix)
+neighbor weight (all routes learned from this neighbor)
+Within the route-map, the set weight command is used
+The direction of the route-map applied to change the weight value will always be inbound
+
+# Setting the Local Preference
+
+It is a BGP path attribute
+Its purpose is to identify the best exit point from the AS to reach a given prefix; that is, it affects the outbound traffic
+This attribute is advertised to all iBGP neighbours but is not advertised to eBGP neighbours
+The higher value is preferred
+The default value is 100
+The default value can be changed from 100 to some user-defined value by using:bgp default local-preference #
+Changes to LOCAL_PREF are applied to an eBGP neighbour using the command:neighbor route-map in
+With route-map, the set local-preference command is used
+
+# Using AS_Path Prepending
+
+AS_Path is a BGP attribute
+The shortest length of AS_Path is preferred
+This attribute can be modified to influence inbound and outbound traffic
+Ideally, the local AS number is prepended to the current length of AS_Path PA
+AS_Path prepending can be configured by using the command set as-path prepend under a route-map entry
+This route-map can then be applied to a neighbour using the command:neighbor route-map [in | out]
+
+# MED
+
+It is a BGP PA
+It can be modified to influence the inbound traffic coming from the neighboring AS
+It is not advertised beyond the neighboring AS
+A smaller value is preferred
+The default value is 0
+The MED value can be changed using the commandset metric under a route-map entry
+That route-map is then applied to a BGP neighbour using the commandneighbor route-map out
+MED can only be compared against one ASN
+To compare against two ASN add command: bgp always-compare-med
+Non zero value will be carried to RIB, when chosen as a best route
+
+# BGP Maximum Paths
+
+BGP supports the maximum-paths # subcommand, but BGP uses significantly different logic than the IGPs

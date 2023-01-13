@@ -1,0 +1,28 @@
+### Learning Notes
+- Cloud
+  - AWS
+- Linux
+  - Linux Essentials
+  - LPIC-1
+  - Ubuntu Administration
+- Network Automation
+  - Ansible
+  - Vagrant
+- Networking
+  - Cisco
+    - DC: CCNA DC
+    - DevNet: DevNet Associate
+    - Enterprise: IP Routing, LAN Switching
+    - Security: CCNA Security
+    - Wireless: CCNA Wireless
+  - Juniper
+    - Enterprise: JNCIA, JNCIS
+    - Security: SRX
+  - Palo Alto: PCNSA
+  - Technology Deep Dives: ICMP
+- Progamming
+  - C
+  - Git
+  - Python
+- Windows Servers
+- Wireshark

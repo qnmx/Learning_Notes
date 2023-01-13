@@ -1,0 +1,17 @@
+### Git basic commands:
+
+git clone - to clone from specified location
+
+git init - to initialize git
+
+git add . - to add all files
+
+git commit -m “” - to commit changes
+
+git push origin master - to push changes to remote repository
+
+git pull origin master - to get a “fresh” copy from the remote repository
+
+git status - to verify the status of git
+
+git remote -v -to verify the remote location

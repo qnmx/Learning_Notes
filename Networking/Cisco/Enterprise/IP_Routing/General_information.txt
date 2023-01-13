@@ -1,0 +1,22 @@
+RIB - Routing Information Base, piece of memory used to holds routing information
+
+### Prefix List
+
+Route selection tool similar to Access Lists
+
+Commonly used with Route Filtering or Redistribution
+Advantages- Ability to match the exact routeRoute = address (prefix) + mask (prefix length)access-list 10 permit 172.16.0.0 matches 172.16.0.0/16, 172.16.0.0/24, etc- Faster processing
+Syntax- ip prefix-list name seq nr [deny|permit] prefix/length [ge val] [le val]
+
+# Prefix List Evaluation
+
+Prefix List entries are evaluated top-down using 2-step logic
+
+Checking the route's prefix (address)- AND operation between the route and list's entry prefix length
+Checking the route's prefix length (mask)- Range operators (le and/or ge) are no usedMust be equal to the length value- Range operators (le and ge) are usedMust fall between the ge and le values (inclusive)- Range operator le is usedMust be shorter than the le value (but no less than the length value)- Range operator ge is usedMust be equal to or longer than the ge value
+
+### Route Maps
+
+Generic IOS matching mechanism for packets or routes- Commonly used for Redistribution, Policy-Based Routing or BGP attribute modifications- Ordered sequence of individual “permit” and/or “deny” statementsroute-map rname [permit|deny] seq_nr mach condition(s) set attribute(s)
+
+ - Evaluated top-down   When a match is found, the processing stops   End with an implicit “deny” statement

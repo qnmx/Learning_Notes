@@ -1,0 +1,25 @@
+### NAT Terminology
+
+Inside zone - networks that translator wants to hide
+
+Inside local - Inside IPs before translation
+Inside global - Inside IPs after translation
+
+Outside zone - networks that are external to translator
+
+Outside global 
+- Original outside IP address
+Outside local 
+- Outside IP after translation as is seen inside
+
+### NAT Order of Operations
+
+On the inside
+- Packets are first routed and then have sources translated
+- Destination addresses are global so this is OK
+One the outside
+- Packets have destinations un-translated first
+- Routing occurs after translation
+- Allows proper routing for returning packets with translated sources
+
+https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipaddr_nat/configuration/15-mt/nat-15-mt-book/iadnat-addr-consv.html#GUID-D8BC9775-12DC-445A-9436-5CDB7502C931

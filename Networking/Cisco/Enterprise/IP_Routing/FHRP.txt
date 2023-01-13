@@ -1,0 +1,21 @@
+### Hot Standby Router Protocol
+
+Cisco Proprietary
+Uses UDP port 1985 and multicast 224.0.0.2
+Two roles: Active and Standby
+HSRP router with highest priority is considered “Active”
+- Default priority = 100
+MAC address: 0000.0c07.acXX
+- XX refers to the group number in hexadecimal
+Preemption disabled by default
+HSRP/VRRP = No load-sharing feature
+MHSRP (Multi-group HSRP) can be used for load sharing
+
+I### mplementing Basic HSRP
+
+Enabling HRSP in the interface
+standby <group-id> ip <virtual-ip>
+Configuring priority
+standby <group-id> priority <priority>
+Enabling preemption
+standby <group-id> preempt

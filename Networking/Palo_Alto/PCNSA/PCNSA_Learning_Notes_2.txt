@@ -1,0 +1,14 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	    ### Deploy, Administer, and Secure Palo Alto Firewalls ###
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Palo Alto Networks
+
+- Strata: Enterprise Security
+- Prisma: Cloud Security
+- Cortex: Security Operations
+
+- App-ID: Determines the application regardless of port and protocol
+- Content-ID: Threat prevention services
+- User-ID:
+  Integrate with Active Directory
+  Define Groups and Roles

@@ -203,6 +203,39 @@ nodes2.remove("SV1")
 # Lists: Comprehension
 - Combines the "for loop" with an interable data type
 - The range() function
+- Sample:
+odds = [ x for x in range(1, 101, 2)]
+odds.append(3.14)
+pi = [x for x in odds if type(x) == float]
+
+# Dictionaries
+- Mutable data structure
+- Delete key, value from dict
+del VAR["KEY"]
+- Methods:
+
+- .clear()
+- to empty a dictionary
+
+- .copy()
+- to create a copy of a dict
+
+- .items()
+- returns dict_items
+
+- .keys()
+- returns dict_keys
+
+- .values()
+- returns dict_values
+
+- .pop(KEY)
+- removes specific key from the dict
+
+- .popitem()
+- returns a 2-tupple
+
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
